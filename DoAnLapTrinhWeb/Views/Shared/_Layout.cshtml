@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@ViewData["Title"] — Vermeil Fine Dining</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">VERMEIL<sup>®</sup></a>
+  <ul class="nav-links">
+    <li><a href="#hero">Trang Chủ</a></li>
+    <li><a href="#menu">Thực Đơn</a></li>
+    <li><a href="#about">Về Chúng Tôi</a></li>
+    <li><a href="#reservation">Liên Hệ</a></li>
+    <partial name="_LoginPartial" />
+  </ul>
+  <button class="nav-cta">Đặt Bàn</button>
+</nav>
+
+@RenderBody()
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#hero" class="nav-logo">VERMEIL<sup style="color:var(--gold-light)">®</sup></a>
+      <p>Nơi giao thoa giữa nghệ thuật ẩm thực đỉnh cao và không gian sang trọng tinh tế.</p>
+      <div class="social-row">
+        <div class="social-btn">f</div>
+        <div class="social-btn">in</div>
+        <div class="social-btn">ig</div>
+        <div class="social-btn">yt</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Khám Phá</h5>
+      <ul>
+        <li><a href="#hero">Trang Chủ</a></li>
+        <li><a href="#menu">Thực Đơn</a></li>
+        <li><a href="#about">Về Chúng Tôi</a></li>
+        <li><a href="#reservation">Đặt Bàn</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Dịch Vụ</h5>
+      <ul>
+        <li><a href="#">Tiệc Riêng Tư</a></li>
+        <li><a href="#">Sự Kiện Công Ty</a></li>
+        <li><a href="#">Wine Pairing</a></li>
+        <li><a href="#">Chef's Table</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Liên Hệ</h5>
+      <ul>
+        <li><a href="#">12 Phố Hoàng Diệu</a></li>
+        <li><a href="#">(024) 3826 5500</a></li>
+        <li><a href="#">hello@vermeil.vn</a></li>
+        <li><a href="#">10:00 — 22:30 hàng ngày</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Vermeil Fine Dining. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="#">Chính Sách</a><div class="sep"></div>
+      <a href="#">Điều Khoản</a><div class="sep"></div>
+      <a href="#">Bảo Mật</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
