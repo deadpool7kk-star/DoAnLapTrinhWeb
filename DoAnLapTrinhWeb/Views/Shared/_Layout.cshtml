@@ -16,16 +16,16 @@
     <li><a href="#hero">Trang Chủ</a></li>
     <li><a href="#menu">Thực Đơn</a></li>
     <li><a href="#about">Về Chúng Tôi</a></li>
-    <li><a href="#reservation">Liên Hệ</a></li>
+    <li><a href="#contact">Liên Hệ</a></li>
     <partial name="_LoginPartial" />
   </ul>
-  <button class="nav-cta">Đặt Bàn</button>
+  <button class="nav-cta" onclick="window.location.href='#reservation'">Đặt Bàn</button>
 </nav>
 
 @RenderBody()
 
 <!-- FOOTER -->
-<footer>
+<footer id="contact">
   <div class="footer-top">
     <div class="footer-brand">
       <a href="#hero" class="nav-logo">VERMEIL<sup style="color:var(--gold-light)">®</sup></a>

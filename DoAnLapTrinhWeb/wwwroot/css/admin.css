@@ -191,7 +191,16 @@
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { font-family:'Jost',sans-serif; background:var(--black-2); color:var(--text-main); display:flex; min-height:100vh; }
+    body { 
+      font-family:'Jost',sans-serif; 
+      background:var(--black-2); 
+      color:var(--text-main); 
+      display:flex; 
+      min-height:100vh; 
+      align-items: stretch; 
+      justify-content: flex-start; 
+      overflow: auto; 
+    }
     ::-webkit-scrollbar { width:4px; }
     ::-webkit-scrollbar-track { background:var(--black); }
     ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
