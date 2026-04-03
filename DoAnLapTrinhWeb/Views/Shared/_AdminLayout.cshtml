@@ -54,17 +54,19 @@
   @inject UserManager<ApplicationUser> UserManager
 
   <div class="sidebar-footer">
-    <div class="admin-info">
-      <div class="admin-avatar">👑</div>
-      <div class="admin-detail">
-        @{
-            var currentUser = await UserManager.GetUserAsync(User);
-            var displayName = currentUser?.FullName ?? "Admin";
-        }
-        <strong>@displayName</strong>
-        <span>Super Admin</span>
+    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ">
+      <div class="admin-info">
+        <div class="admin-avatar">👑</div>
+        <div class="admin-detail">
+          @{
+              var currentUser = await UserManager.GetUserAsync(User);
+              var displayName = currentUser?.FullName ?? "Admin";
+          }
+          <strong>@displayName</strong>
+          <span>Super Admin</span>
+        </div>
       </div>
-    </div>
+    </a>
     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
         <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ Đăng Xuất</button>
     </form>
@@ -83,11 +85,7 @@
         <span>🔍</span>
         <input type="text" placeholder="Tìm kiếm món ăn..."/>
       </div>
-      <div class="topbar-icon">
-        🔔
-        <span class="notif-dot"></span>
-      </div>
-      <div class="topbar-icon">👤</div>
+      @await Component.InvokeAsync("NotificationBell")
     </div>
   </div>
   @RenderBody()
