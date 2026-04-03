@@ -1,0 +1,30 @@
+@using Microsoft.AspNetCore.Identity
+@using DoAnLapTrinhWeb.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>
+        @{
+            var currentUser = await UserManager.GetUserAsync(User);
+            var displayName = currentUser?.FullName ?? UserManager.GetUserName(User);
+        }
+        <a id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="color:var(--gold-light);">Chào @displayName</a>
+    </li>
+    <li>
+        <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" style="display:inline; margin:0; padding:0;">
+            <button id="logout" type="submit" style="background:none; border:none; padding:0; color:var(--text-soft); font-size:.78rem; font-weight:500; font-family:'Jost',sans-serif; letter-spacing:.15em; text-transform:uppercase; cursor:pointer;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='var(--text-soft)'">Đăng xuất</button>
+        </form>
+    </li>
+}
+else
+{
+    <li>
+        <a id="register" asp-area="Identity" asp-page="/Account/Register">Đăng Ký</a>
+    </li>
+    <li>
+        <a id="login" asp-area="Identity" asp-page="/Account/Login" style="color:var(--gold);">Đăng Nhập</a>
+    </li>
+}

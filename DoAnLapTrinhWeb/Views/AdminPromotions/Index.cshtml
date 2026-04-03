@@ -1,0 +1,139 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Dish>
+@{
+    ViewData["Title"] = "Giá & Khuyến Mãi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-body">
+  <!-- STATS FOR PROMOTIONS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-card-top"><div class="stat-card-icon">🎁</div></div>
+      <div class="stat-card-num">@Model.Count(m => m.DiscountPercentage.HasValue && m.DiscountPercentage.Value > 0)</div>
+      <div class="stat-card-label">Món Đang Giảm Giá</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top"><div class="stat-card-icon">🔥</div></div>
+      <div class="stat-card-num">@Model.Count(m => m.Badge != null && m.Badge.Contains("SALE"))</div>
+      <div class="stat-card-label">Sử Dụng Nhãn SALE</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-header-left">
+      <h2>Quản Lý Giá & Khuyến Mãi</h2>
+      <p>Điều chỉnh phần trăm giảm giá và ưu đãi món ăn</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="promoTable">
+      <thead>
+        <tr>
+          <th>TÊN MÓN</th>
+          <th>DANH MỤC</th>
+          <th>GIÁ GỐC</th>
+          <th>KHUYẾN MÃI (%)</th>
+          <th>GIÁ SAU GIẢM</th>
+          <th>NHÃN HIỆN TẠI</th>
+          <th>THAO TÁC</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="row-@item.Id">
+              <td>
+                <div class="td-dish">
+                  <div class="td-icon">@(item.Icon ?? "🍽️")</div>
+                  <div class="td-dish-name">@item.Name</div>
+                </div>
+              </td>
+              <td>@(item.Category?.Name ?? "N/A")</td>
+              <td class="price-cell">@item.Price.ToString("N0")₫</td>
+              <td>
+                <div class="input-group-m">
+                  <input type="number" class="promo-input" value="@(item.DiscountPercentage ?? 0)" min="0" max="100" 
+                         id="input-@item.Id" oninput="calcPrice(@item.Id, @item.Price)" />
+                  <span class="input-suffix">%</span>
+                </div>
+              </td>
+              <td>
+                <span class="discounted-price" id="final-@item.Id" style="color:var(--gold); font-weight:600;">
+                    @item.DiscountedPrice.ToString("N0")₫
+                </span>
+              </td>
+              <td>
+                <span class="status-badge @(item.Badge != null && item.Badge.Contains("SALE") ? "active" : "")" id="badge-@item.Id">
+                    @(item.Badge ?? "Không có")
+                </span>
+              </td>
+              <td>
+                <button class="btn-save-mini" onclick="savePromo(@item.Id)">LƯU</button>
+              </td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .input-group-m { display: flex; align-items: center; background: rgba(255,255,255,0.05); border-radius: 4px; padding: 0 8px; width: fit-content; border: 1px solid rgba(255,255,255,0.1); }
+  .promo-input { background: transparent; border: none; color: white; width: 40px; text-align: right; padding: 6px 0; outline: none; font-family: inherit; font-size: 0.9rem; }
+  .input-suffix { color: var(--text-muted); font-size: 0.8rem; margin-left: 2px; }
+  .btn-save-mini { background: var(--gold); color: black; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: transform 0.2s; }
+  .btn-save-mini:active { transform: scale(0.95); }
+  .price-cell { color: var(--text-muted); text-decoration: line-through; font-size: 0.85rem; }
+</style>
+
+@section Scripts {
+<script>
+    function calcPrice(id, originalPrice) {
+        const pct = document.getElementById('input-' + id).value || 0;
+        const final = originalPrice * (1 - pct / 100);
+        document.getElementById('final-' + id).innerText = new Intl.NumberFormat('vi-VN').format(Math.round(final)) + '₫';
+    }
+
+    async function savePromo(id) {
+        const pct = document.getElementById('input-' + id).value;
+        const btn = event.target;
+        btn.innerText = 'ĐANG LƯU...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(`/AdminPromotions/UpdateDiscount?id=${id}&discountPercentage=${pct}`, { method: 'POST' });
+            const data = await response.json();
+            
+            if (data.success) {
+                btn.innerText = 'THÀNH CÔNG';
+                btn.style.background = '#4CAF50';
+                
+                // Cập nhật nhãn ngay lập tức (Xử lý sơ bộ phía Client)
+                const badgeEl = document.getElementById('badge-' + id);
+                if (pct > 0) {
+                    badgeEl.innerText = 'SALE -' + pct + '%';
+                    badgeEl.classList.add('active');
+                } else {
+                    badgeEl.innerText = 'Không có';
+                    badgeEl.classList.remove('active');
+                }
+
+                setTimeout(() => {
+                    btn.innerText = 'LƯU';
+                    btn.style.background = 'var(--gold)';
+                    btn.disabled = false;
+                }, 1500);
+            } else {
+                alert('Lỗi khi cập nhật khuyến mãi.');
+                btn.innerText = 'THỬ LẠI';
+                btn.disabled = false;
+            }
+        } catch (e) {
+            console.error(e);
+            btn.disabled = false;
+            btn.innerText = 'LỖI';
+        }
+    }
+</script>
+}
