@@ -122,8 +122,8 @@
       <h2 class="section-title">Dành Riêng <em>Bàn Của Bạn</em></h2>
       <p>Hãy để chúng tôi chuẩn bị một buổi tối hoàn hảo — đặt bàn trước để đảm bảo trải nghiệm tốt nhất và nhận những ưu đãi dành riêng cho thực khách.</p>
       <div class="contact-list">
-        <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-text"><strong>Địa chỉ</strong><span>12 Phố Hoàng Diệu, Ba Đình, Hà Nội</span></div></div>
-        <div class="contact-row"><div class="contact-icon">🕐</div><div class="contact-text"><strong>Giờ mở cửa</strong><span>Thứ 2 – Chủ Nhật: 10:00 — 22:30</span></div></div>
+        <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-text"><strong>Địa chỉ</strong><span>87A đường Merlin, Tân Phú, Thủ Đức</span></div></div>
+        <div class="contact-row"><div class="contact-icon">🕐</div><div class="contact-text"><strong>Giờ mở cửa</strong><span>Thứ 2 – Chủ Nhật: 8:30 — 23:00</span></div></div>
         <div class="contact-row"><div class="contact-icon">📞</div><div class="contact-text"><strong>Điện thoại</strong><span>(024) 3826 5500 · 0912 345 678</span></div></div>
         <div class="contact-row"><div class="contact-icon">✉️</div><div class="contact-text"><strong>Email</strong><span>hello@vermeil.vn</span></div></div>
       </div>
@@ -152,17 +152,49 @@
           </div>
           <div class="form-row">
             <div class="form-group"><label>Ngày</label><input type="date" name="BookingDate" required/></div>
-            <div class="form-group"><label>Giờ</label><input type="time" name="BookingTime" required/></div>
+            <div class="form-group"><label>Giờ</label>
+              <select name="BookingTime" required>
+                <option value="">— Chọn giờ —</option>
+                <option value="08:30">8:30 AM</option>
+                <option value="09:00">9:00 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="16:30">4:30 PM</option>
+                <option value="17:00">5:00 PM</option>
+                <option value="17:30">5:30 PM</option>
+                <option value="18:00">6:00 PM</option>
+                <option value="18:30">6:30 PM</option>
+                <option value="19:00">7:00 PM</option>
+                <option value="19:30">7:30 PM</option>
+                <option value="20:00">8:00 PM</option>
+                <option value="20:30">8:30 PM</option>
+                <option value="21:00">9:00 PM</option>
+                <option value="21:30">9:30 PM</option>
+                <option value="22:00">10:00 PM</option>
+                <option value="22:30">10:30 PM</option>
+                <option value="23:00">11:00 PM</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label>Số Khách</label>
             <select name="GuestCount" required>
               <option value="">— Chọn số khách —</option>
-              <option value="1 người">1 người</option>
-              <option value="2 người">2 người</option>
-              <option value="3 – 4 người">3 – 4 người</option>
-              <option value="5 – 6 người">5 – 6 người</option>
-              <option value="7+ người (sự kiện)">7+ người (sự kiện)</option>
+              <option value="1 - 2 người (bàn nhỏ)">1 - 2 người (bàn nhỏ)</option>
+              <option value="3 - 4 người (bàn cỡ trung)">3 - 4 người (bàn cỡ trung)</option>
+              <option value="5+ người (bàn lớn)">5+ người (bàn lớn)</option>
             </select>
           </div>
           <div class="form-group"><label>Ghi Chú Đặc Biệt</label><textarea name="Note" placeholder="Dị ứng thực phẩm, dịp kỷ niệm, yêu cầu đặc biệt…"></textarea></div>

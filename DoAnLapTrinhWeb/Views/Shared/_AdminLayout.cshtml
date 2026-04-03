@@ -48,15 +48,26 @@
     </a>
   </nav>
 
+  @using Microsoft.AspNetCore.Identity
+  @using DoAnLapTrinhWeb.Models
+  @inject SignInManager<ApplicationUser> SignInManager
+  @inject UserManager<ApplicationUser> UserManager
+
   <div class="sidebar-footer">
     <div class="admin-info">
       <div class="admin-avatar">👑</div>
       <div class="admin-detail">
-        <strong>Nguyễn Minh Tú</strong>
+        @{
+            var currentUser = await UserManager.GetUserAsync(User);
+            var displayName = currentUser?.FullName ?? "Admin";
+        }
+        <strong>@displayName</strong>
         <span>Super Admin</span>
       </div>
     </div>
-    <button class="btn-logout">⬡ Đăng Xuất</button>
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+        <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ Đăng Xuất</button>
+    </form>
   </div>
 </aside>
 

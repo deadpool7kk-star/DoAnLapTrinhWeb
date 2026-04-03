@@ -18,6 +18,10 @@
     <li><a href="#about">Về Chúng Tôi</a></li>
     <li><a href="#contact">Liên Hệ</a></li>
     <partial name="_LoginPartial" />
+    @if (User.IsInRole("Admin"))
+    {
+        <li><a asp-action="Index" asp-controller="AdminReservations" style="color:var(--gold); border:1px solid var(--gold); padding:4px 10px; margin-left:10px;">Quản Lý</a></li>
+    }
   </ul>
   <button class="nav-cta" onclick="window.location.href='#reservation'">Đặt Bàn</button>
 </nav>
