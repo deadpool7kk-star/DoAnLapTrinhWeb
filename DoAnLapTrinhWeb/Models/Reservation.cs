@@ -31,6 +31,8 @@ namespace DoAnLapTrinhWeb.Models
         [StringLength(20)]
         public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
 
+        public string? UserId { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
