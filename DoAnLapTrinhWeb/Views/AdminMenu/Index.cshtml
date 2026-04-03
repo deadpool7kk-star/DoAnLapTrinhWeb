@@ -1,0 +1,296 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Dish>
+@{
+    ViewData["Title"] = "Quản Lý Thực Đơn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var categories = ViewBag.Categories as IEnumerable<DoAnLapTrinhWeb.Models.Category> ?? new List<DoAnLapTrinhWeb.Models.Category>();
+}
+
+<!-- PAGE BODY -->
+<div class="page-body">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-card-icon">🍽️</div>
+        <span class="stat-trend">—</span>
+      </div>
+      <div class="stat-card-num">@Model.Count()</div>
+      <div class="stat-card-label">Tổng Món Ăn</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-card-icon">✅</div>
+        <span class="stat-trend">—</span>
+      </div>
+      <div class="stat-card-num">@Model.Count(m => m.IsVisible)</div>
+      <div class="stat-card-label">Đang Hiển Thị</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-card-icon">🗂️</div>
+        <span class="stat-trend">—</span>
+      </div>
+      <div class="stat-card-num">@categories.Count()</div>
+      <div class="stat-card-label">Danh Mục</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <div class="stat-card-icon">⭐</div>
+        <span class="stat-trend">—</span>
+      </div>
+      <div class="stat-card-num">@Model.Count(m => !m.IsVisible)</div>
+      <div class="stat-card-label">Ẩn / Hết Món</div>
+    </div>
+  </div>
+
+  <!-- TABLE SECTION -->
+  <div class="section-header">
+    <div class="section-header-left">
+      <h2>Danh Sách Món Ăn</h2>
+      <p>Quản lý toàn bộ thực đơn nhà hàng</p>
+    </div>
+    <div class="section-header-right">
+      <button class="btn-filter">
+        ⚙ Lọc
+      </button>
+      <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('show')">
+        ＋ Thêm Món Mới
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-row">
+    <button class="tab active">Tất Cả (@Model.Count())</button>
+    @foreach(var cat in categories)
+    {
+        <button class="tab">@cat.Name (@Model.Count(m => m.CategoryId == cat.Id))</button>
+    }
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tên Món</th>
+          <th>Danh Mục</th>
+          <th>Giá</th>
+          <th>Trạng Thái</th>
+          <th>Cập Nhật</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+              <td style="color:var(--text-muted);font-size:.78rem">@item.Id.ToString("D2")</td>
+              <td>
+                <div class="td-dish">
+                  <div class="td-icon">@(string.IsNullOrEmpty(item.Icon) ? "🍽️" : item.Icon)</div>
+                  <div>
+                    <div class="td-dish-name">@item.Name</div>
+                    <div class="td-dish-cat">@(item.Category?.Name) @(string.IsNullOrEmpty(item.Badge) ? "" : "· " + item.Badge)</div>
+                  </div>
+                </div>
+              </td>
+              <td>@(item.Category?.Name)</td>
+              <td><span class="price-cell">@item.Price.ToString("N0")₫</span></td>
+              <td>
+                  @if (item.IsVisible)
+                  {
+                      <span class="status-badge active">Hiển thị</span>
+                  }
+                  else
+                  {
+                      <span class="status-badge hidden">Đã ẩn</span>
+                  }
+              </td>
+              <td style="font-size:.76rem;color:var(--text-muted)">@item.UpdatedAt.ToString("dd/MM/yyyy")</td>
+              <td>
+                <div class="action-group">
+                  <button class="btn-view">👁</button>
+                  <button class="btn-edit" onclick="openEditModal(@item.Id, '@item.Name', @item.CategoryId, @item.Price.ToString("0"), '@item.Description', '@item.Badge', @(item.IsVisible ? "true" : "false"), '@item.Icon')">✏ Sửa</button>
+                  <button class="btn-delete" onclick="openDeleteModal(@item.Id, '@item.Name')">✕ Xoá</button>
+                </div>
+              </td>
+            </tr>
+        }
+        @if(!Model.Any()) {
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted);">Chưa có món ăn nào trong thực đơn.</td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ MODAL: THÊM MÓN ══ -->
+<div class="modal-overlay" id="modalAdd">
+  <div class="modal">
+    <button type="button" class="modal-close" onclick="document.getElementById('modalAdd').classList.remove('show')">✕</button>
+    <h3>Thêm Món Mới</h3>
+    <p>Điền đầy đủ thông tin · Lưu để cập nhật thực đơn</p>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group-m">
+          <label>Tên Món</label>
+          <input type="text" name="Name" required placeholder="Nhập tên món ăn..."/>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group-m">
+            <label>Danh Mục</label>
+            <select name="CategoryId" required>
+              <option value="">— Chọn danh mục —</option>
+              @foreach (var cat in categories)
+              {
+                  <option value="@cat.Id">@cat.Name</option>
+              }
+            </select>
+          </div>
+          <div class="form-group-m">
+            <label>Giá (₫)</label>
+            <input type="number" name="Price" required placeholder="0"/>
+          </div>
+        </div>
+        <div class="form-group-m">
+          <label>Mô Tả</label>
+          <textarea name="Description" placeholder="Mô tả nguyên liệu và cách chế biến..."></textarea>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group-m">
+            <label>Badge / Nhãn</label>
+            <select name="Badge">
+              <option value="">— Không có —</option>
+              <option value="Mới">Mới</option>
+              <option value="Signature">Signature</option>
+              <option value="Phổ Biến">Phổ Biến</option>
+              <option value="Chef's Pick">Chef's Pick</option>
+            </select>
+          </div>
+          <div class="form-group-m">
+            <label>Trạng Thái</label>
+            <select name="IsVisible">
+              <option value="true">Hiển thị</option>
+              <option value="false">Ẩn</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group-m">
+          <label>Icon Emoji</label>
+          <input type="text" name="Icon" placeholder="VD: 🥩, 🐟, 🍝"/>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalAdd').classList.remove('show')">Huỷ</button>
+          <button type="submit" class="btn-modal-save">＋ Lưu Món Mới</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ MODAL: SỬA MÓN ══ -->
+<div class="modal-overlay" id="modalEdit">
+  <div class="modal">
+    <button type="button" class="modal-close" onclick="document.getElementById('modalEdit').classList.remove('show')">✕</button>
+    <h3>Chỉnh Sửa Món Ăn</h3>
+    <p>Cập nhật thôngত্তি · Lưu để áp dụng thay đổi</p>
+
+    <form asp-action="Edit" method="post" id="formEdit">
+        <input type="hidden" name="Id" id="editId" />
+        <div class="form-group-m">
+          <label>Tên Món</label>
+          <input type="text" name="Name" id="editName" required />
+        </div>
+        <div class="form-row-2">
+          <div class="form-group-m">
+            <label>Danh Mục</label>
+            <select name="CategoryId" id="editCategory" required>
+              @foreach (var cat in categories)
+              {
+                  <option value="@cat.Id">@cat.Name</option>
+              }
+            </select>
+          </div>
+          <div class="form-group-m">
+            <label>Giá (₫)</label>
+            <input type="number" name="Price" id="editPrice" required />
+          </div>
+        </div>
+        <div class="form-group-m">
+          <label>Mô Tả</label>
+          <textarea name="Description" id="editDesc"></textarea>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group-m">
+            <label>Badge / Nhãn</label>
+            <select name="Badge" id="editBadge">
+              <option value="">— Không có —</option>
+              <option value="Mới">Mới</option>
+              <option value="Signature">Signature</option>
+              <option value="Phổ Biến">Phổ Biến</option>
+              <option value="Chef's Pick">Chef's Pick</option>
+            </select>
+          </div>
+          <div class="form-group-m">
+            <label>Trạng Thái</label>
+            <select name="IsVisible" id="editVisible">
+              <option value="true">Hiển thị</option>
+              <option value="false">Ẩn</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group-m">
+          <label>Icon Emoji</label>
+          <input type="text" name="Icon" id="editIcon"/>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalEdit').classList.remove('show')">Huỷ</button>
+          <button type="submit" class="btn-modal-save">✓ Lưu Thay Đổi</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ MODAL: XOÁ ══ -->
+<div class="modal-overlay" id="modalDelete">
+  <div class="modal modal-delete">
+    <button type="button" class="modal-close" onclick="document.getElementById('modalDelete').classList.remove('show')">✕</button>
+    <div class="del-icon">🗑️</div>
+    <h3>Xác Nhận Xoá Món</h3>
+    <p>Bạn có chắc muốn xoá <strong style="color:var(--gold)" id="delDishName"></strong> khỏi thực đơn? Hành động này không thể hoàn tác.</p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" name="id" id="delDishId" />
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalDelete').classList.remove('show')">Huỷ Bỏ</button>
+          <button type="submit" class="btn-confirm-del">✕ Xác Nhận Xoá</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+    function openEditModal(id, name, catId, price, desc, badge, isVisible, icon) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editCategory').value = catId;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editDesc').value = desc;
+        document.getElementById('editBadge').value = badge;
+        document.getElementById('editVisible').value = isVisible ? "true" : "false";
+        document.getElementById('editIcon').value = icon;
+        
+        document.getElementById('modalEdit').classList.add('show');
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById('delDishId').value = id;
+        document.getElementById('delDishName').innerText = '"' + name + '"';
+        document.getElementById('modalDelete').classList.add('show');
+    }
+</script>
+}

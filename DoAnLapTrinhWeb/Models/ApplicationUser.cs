@@ -4,6 +4,7 @@ namespace DoAnLapTrinhWeb.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        // Thêm các thuộc tính tuỳ chỉnh của riêng bạn ở đây (Vd: FullName, Address, ...)
+        // Tên hiển thị / Tên đăng nhập của người dùng
+        public string? FullName { get; set; }
     }
 }

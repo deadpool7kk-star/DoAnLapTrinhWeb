@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using DoAnLapTrinhWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -5,19 +6,38 @@ using System.Diagnostics;
 
 namespace DoAnLapTrinhWeb.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookTable(Reservation reservation)
+        {
+            if (ModelState.IsValid)
+            {
+                reservation.CreatedAt = DateTime.Now;
+                reservation.Status = "Pending";
+                _context.Reservations.Add(reservation);
+                await _context.SaveChangesAsync();
+                
+                TempData["Message"] = "Đặt bàn thành công! Chúng tôi sẽ sớm liên hệ xác nhận qua điện thoại.";
+                return RedirectToAction(nameof(Index), "Home", new { area = "" }, "reservation");
+            }
+            
+            TempData["Error"] = "Vui lòng kiểm tra lại thông tin đăng ký.";
+            return RedirectToAction(nameof(Index), "Home", new { area = "" }, "reservation");
         }
 
         public IActionResult Privacy()

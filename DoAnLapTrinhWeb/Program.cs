@@ -52,6 +52,9 @@ app.MapRazorPages();
 // ------- BƯỚC 2: TỰ ĐỘNG TẠO ROLE VÀ ADMIN (SEED DATA) --------
 using (var scope = app.Services.CreateScope())
 {
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate(); // Tự động chạy Migration tạo DB và bảng nếu chưa tồn tại
+
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
