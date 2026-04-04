@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Quản Lý Đặt Bàn";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["ShowBack"] = true;
+    ViewData["BackUrl"] = Url.Action("Index", "Home");
 }
 
 <style>
@@ -164,6 +166,88 @@
         float: right;
         border-radius: 4px;
     }
+
+    /* ── UNIFIED ACTION BUTTONS ── */
+    .action-group {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        font-family: 'Jost', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--text-muted);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn-action:active {
+        transform: translateY(0);
+    }
+
+    /* Success Theme (Duyệt) */
+    .btn-action-success {
+        border-color: rgba(126, 205, 160, 0.3);
+        color: #7ecda0;
+    }
+    .btn-action-success:hover {
+        background: #7ecda0;
+        color: var(--black);
+        border-color: #7ecda0;
+    }
+
+    /* Primary Theme (Xếp Bàn, Lập Hóa Đơn) */
+    .btn-action-primary {
+        border-color: rgba(201, 168, 76, 0.3);
+        color: var(--gold);
+    }
+    .btn-action-primary:hover {
+        background: var(--gold);
+        color: var(--black);
+        border-color: var(--gold);
+    }
+
+    /* Danger Theme (Hủy, Xóa) */
+    .btn-action-danger {
+        border-color: rgba(192, 57, 43, 0.3);
+        color: #e08080;
+    }
+    .btn-action-danger:hover {
+        background: #9e2020;
+        color: #fff;
+        border-color: #9e2020;
+    }
+
+    /* Info Theme (Chi tiết) */
+    .btn-action-info {
+        border-color: rgba(245, 237, 224, 0.15);
+        color: var(--text-soft);
+    }
+    .btn-action-info:hover {
+        background: rgba(245, 237, 224, 0.1);
+        border-color: rgba(245, 237, 224, 0.3);
+        color: var(--cream);
+    }
 </style>
 
 <div class="page-body">
@@ -280,28 +364,28 @@
                                 @if (item.Status == "Pending")
                                 {
                                     <form asp-action="Confirm" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn-edit" style="border-color: #7ecda0; color: #7ecda0;">✓ Duyệt</button>
+                                        <button type="submit" class="btn-action btn-action-success">✓ Duyệt</button>
                                     </form>
                                     <form asp-action="Cancel" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn-delete">✕ Hủy</button>
+                                        <button type="submit" class="btn-action btn-action-danger">✕ Hủy</button>
                                     </form>
                                 }
                                 else if (item.Status == "Confirmed")
                                 {
-                                    <button onclick="assignTable(@item.Id)" class="btn-edit" style="border-color: #c9a84c; color: #c9a84c;">🍽️ Xếp Bàn</button>
+                                    <button onclick="assignTable(@item.Id)" class="btn-action btn-action-primary">🍽️ Xếp Bàn</button>
                                 }
                                 else if (item.Status == "Seated")
                                 {
-                                    <a asp-controller="AdminInvoices" asp-action="Create" asp-route-tableId="@item.TableId" asp-route-customerName="@item.FullName" asp-route-reservationId="@item.Id" class="btn-edit" style="border-color: #e2c47a; color: #e2c47a; text-decoration: none; padding: 4px 8px; font-size: 0.75rem;">
+                                    <a asp-controller="AdminInvoices" asp-action="Create" asp-route-tableId="@item.TableId" asp-route-customerName="@item.FullName" asp-route-reservationId="@item.Id" class="btn-action btn-action-primary">
                                         💰 Lập Hóa Đơn
                                     </a>
                                 }
                                 
-                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn-delete" onclick="return confirm('Xóa vĩnh viễn yêu cầu này?')">🗑 Xóa</button>
-                                    </form>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn-action btn-action-danger" onclick="return confirm('Xóa vĩnh viễn yêu cầu này?')">🗑 Xóa</button>
+                                </form>
 
-                                <button onclick="viewDetails(@item.Id)" class="btn-view" style="border: 1px solid rgba(201,168,76,0.3); color: var(--gold-light);" title="Xem chi tiết">🔍 Chi tiết</button>
+                                <button onclick="viewDetails(@item.Id)" class="btn-action btn-action-info" title="Xem chi tiết">🔍 Chi tiết</button>
                             </div>
                         </td>
                     </tr>

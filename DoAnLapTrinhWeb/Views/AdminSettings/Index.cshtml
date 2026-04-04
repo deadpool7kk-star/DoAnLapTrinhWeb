@@ -1,0 +1,226 @@
+@{
+    ViewData["Title"] = "Báo Cáo & Kết Toán";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    
+    decimal revenueMonth = ViewBag.RevenueMonth ?? 0;
+    decimal revenueYear = ViewBag.RevenueYear ?? 0;
+    int activeInvoices = ViewBag.ActiveInvoicesCount ?? 0;
+}
+
+<div class="page-body">
+    <!-- PAGE HEADER -->
+    <div class="section-header">
+        <div class="section-header-left">
+            <h2>Cài Đặt Hệ Thống</h2>
+            <p>Quản lý doanh thu, kết toán và cấu hình nhà hàng</p>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-row">
+        <button class="tab active">Doanh Thu & Kết Toán</button>
+        <button class="tab" style="opacity:0.5; cursor:not-allowed;">Cấu Hình Chung (Sắp ra mắt)</button>
+    </div>
+
+    <!-- REVENUE STATS -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">💰</div>
+                <span class="stat-trend">+15% tháng trước</span>
+            </div>
+            <div class="stat-card-num">@revenueMonth.ToString("N0") VNĐ</div>
+            <div class="stat-card-label">Doanh Thu Tháng Hiện Tại</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">📈</div>
+                <span class="stat-trend">— Toàn năm</span>
+            </div>
+            <div class="stat-card-num">@revenueYear.ToString("N0") VNĐ</div>
+            <div class="stat-card-label">Tổng Doanh Thu Năm @DateTime.Now.Year</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">📝</div>
+                <span class="stat-trend">@activeInvoices đang chờ</span>
+            </div>
+            <div class="stat-card-num">@activeInvoices</div>
+            <div class="stat-card-label">Hóa Đơn Đang Hoạt Động</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">📊</div>
+                <span class="stat-trend">—</span>
+            </div>
+            <div class="stat-card-num">@ViewBag.TotalInvoicesMonth</div>
+            <div class="stat-card-label">Tổng Hóa Đơn Tháng</div>
+        </div>
+    </div>
+
+    <!-- ACCOUNTING SECTION -->
+    <div class="table-wrap" style="padding: 40px; text-align: center; background: var(--black-3); margin-bottom: 24px;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🗓️</div>
+            <h3 style="font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.5rem; margin-bottom: 12px;">Kết Toán Tháng Mới</h3>
+            <p style="color: var(--text-soft); font-size: 0.9rem; line-height: 1.6; margin-bottom: 30px;">
+                Chức năng này sẽ đưa toàn bộ hóa đơn hiện tại vào <strong>Kho Lưu Trữ</strong>. 
+                Danh sách hóa đơn của anh sẽ được làm sạch để bắt đầu một tháng kinh doanh mới, trong khi lịch sử doanh thu năm vẫn được bảo toàn.
+            </p>
+            
+            <button onclick="confirmReset()" class="btn-add" style="padding: 15px 40px; margin: 0 auto; font-size: 0.85rem;">
+                🚀 BẮT ĐẦU KẾT TOÁN THÁNG MỚI
+            </button>
+        </div>
+    </div>
+
+    <!-- MAINTENANCE SECTION -->
+    <div style="border: 1px solid rgba(192,57,43,0.3); background: rgba(192,57,43,0.05); padding: 40px; text-align: center; border-radius: 4px;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">⚠️</div>
+            <h3 style="font-family: 'Playfair Display', serif; color: #e08080; font-size: 1.3rem; margin-bottom: 10px;">Bảo Trì & Dọn Dẹp</h3>
+            <p style="color: rgba(245, 237, 224, 0.5); font-size: 0.85rem; margin-bottom: 25px;">
+                Dùng để xóa sạch dữ liệu chạy thử sau khi test xong hệ thống. 
+                Hành động này sẽ xóa vĩnh viễn toàn bộ Hóa đơn, Đặt bàn và đưa Sơ đồ bàn về trạng thái trống.
+            </p>
+            
+            <button onclick="confirmClearAll()" class="btn-delete" style="padding: 12px 30px; margin: 0 auto; color: #e08080; border: 1px solid rgba(192,57,43,0.5);">
+                🗑️ XÓA SẠCH DỮ LIỆU TEST (HẾT SẠCH)
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmReset() {
+            Swal.fire({
+                title: 'Xác nhận Kết toán?',
+                text: "Toàn bộ hóa đơn hiện tại sẽ được lưu trữ!",
+                icon: 'warning',
+                showCancelButton: true,
+                background: '#1c1512',
+                color: '#f5ede0',
+                confirmButtonColor: '#c9a84c',
+                cancelButtonColor: '#4a322d',
+                confirmButtonText: 'Đồng ý, Kết toán ngay',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Đang xử lý...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); },
+                        background: '#1c1512',
+                        color: '#f5ede0'
+                    });
+
+                    // Gọi AJAX Reset
+                    $.ajax({
+                        url: '/AdminSettings/ResetMonthlyData',
+                        type: 'POST',
+                        headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                        success: function(data) {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: data.message,
+                                    background: '#1c1512',
+                                    color: '#f5ede0',
+                                    confirmButtonColor: '#c9a84c'
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: data.message,
+                                    background: '#1c1512',
+                                    color: '#f5ede0'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi kết nối',
+                                text: 'Không thể kết nối đến máy chủ.',
+                                background: '#1c1512',
+                                color: '#f5ede0'
+                            });
+                        }
+                    });
+                }
+            })
+        }
+
+        function confirmClearAll() {
+            Swal.fire({
+                title: 'DỌN DẸP TOÀN BỘ HỆ THỐNG?',
+                text: "Toàn bộ hóa đơn, đơn đặt bàn sẽ biến mất vĩnh viễn không thể khôi phục!",
+                icon: 'error',
+                showCancelButton: true,
+                background: '#1c1512',
+                color: '#f5ede0',
+                confirmButtonColor: '#9e2020',
+                cancelButtonColor: '#4a322d',
+                confirmButtonText: 'Đồng ý, Xóa hết sạch!',
+                cancelButtonText: 'Hủy lệnh'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Xác nhận lần cuối cùng?',
+                        text: "Hành động này sẽ reset sơ đồ bàn về trạng thái Trống. Anh có chắc chắn không?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        background: '#1c1512',
+                        color: '#f5ede0',
+                        confirmButtonColor: '#e74c3c',
+                        confirmButtonText: 'Bắt đầu xóa!',
+                        cancelButtonText: 'Dừng lại'
+                    }).then((finalResult) => {
+                        if (finalResult.isConfirmed) {
+                            Swal.fire({
+                                title: 'Đang làm sạch dữ liệu...',
+                                allowOutsideClick: false,
+                                didOpen: () => { Swal.showLoading(); },
+                                background: '#1c1512',
+                                color: '#f5ede0'
+                            });
+
+                            $.ajax({
+                                url: '/AdminSettings/ClearAllData',
+                                type: 'POST',
+                                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                                success: function(data) {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Hệ thống đã mới tinh!',
+                                            text: data.message,
+                                            background: '#1c1512',
+                                            color: '#f5ede0',
+                                            confirmButtonColor: '#c9a84c'
+                                        }).then(() => {
+                                            window.location.href = '/AdminSettings';
+                                        });
+                                    } else {
+                                        Swal.fire({ icon: 'error', title: 'Lỗi', text: data.message, background: '#1c1512', color: '#f5ede0' });
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Không thể kết nối máy chủ.', background: '#1c1512', color: '#f5ede0' });
+                                }
+                            });
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+}
+<input type="hidden" name="__RequestVerificationToken" value="@(Antiforgery.GetAndStoreTokens(Context).RequestToken)" />
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery

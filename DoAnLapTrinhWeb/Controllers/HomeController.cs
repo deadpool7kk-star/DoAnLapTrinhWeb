@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using DoAnLapTrinhWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace DoAnLapTrinhWeb.Controllers
@@ -20,10 +21,18 @@ namespace DoAnLapTrinhWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories
-                .Include(c => c.Dishes)
+            var dishes = await _context.Dishes
+                .Include(d => d.Category)
+                .Where(d => d.IsVisible && d.Category.Name != "Trạng Miệng")
+                .OrderByDescending(d => d.CreatedAt)
                 .ToListAsync();
-            return View(categories);
+
+            var categories = await _context.Categories
+                .Where(c => c.Name != "Trạng Miệng")
+                .ToListAsync();
+
+            ViewBag.Categories = categories;
+            return View(dishes);
         }
 
         [HttpPost]

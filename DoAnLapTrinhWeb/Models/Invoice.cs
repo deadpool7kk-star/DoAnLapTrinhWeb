@@ -32,6 +32,7 @@ namespace DoAnLapTrinhWeb.Models
         public string PaymentMethod { get; set; } = "Cash";
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool IsArchived { get; set; } = false; // Thuộc tính để ẩn hóa đơn khi đã quyết toán tháng mới
 
         public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
     }

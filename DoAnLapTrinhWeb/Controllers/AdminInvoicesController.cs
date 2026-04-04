@@ -20,7 +20,7 @@ namespace DoAnLapTrinhWeb.Controllers
         // GET: AdminInvoices
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
-            var query = _context.Invoices.AsQueryable();
+            var query = _context.Invoices.Where(i => !i.IsArchived).AsQueryable();
 
             if (startDate.HasValue)
                 query = query.Where(i => i.CreatedAt >= startDate.Value);

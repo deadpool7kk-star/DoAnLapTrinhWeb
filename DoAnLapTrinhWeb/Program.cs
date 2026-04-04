@@ -66,8 +66,13 @@ using (var scope = app.Services.CreateScope())
         await roleManager.CreateAsync(new IdentityRole("Customer"));
     }
 
-    var adminEmail = "admin@test.com";
-    var adminPassword = "123"; // Mật khẩu bạn đã chọn
+    // Thử tài khoản admin của VinhThai trước, nếu không có thì dùng của Tri
+    var adminEmail = "admin@test.com"; 
+    var adminPassword = "123";
+    
+    // Thêm cả tài khoản của Tri vào danh sách cần tạo
+    var secondaryAdminEmail = "Triadmin@gmail.com";
+    var secondaryAdminPassword = "Aa@123";
 
     var adminAccount = await userManager.FindByEmailAsync(adminEmail);
     if (adminAccount == null) {
@@ -99,6 +104,14 @@ using (var scope = app.Services.CreateScope())
             new Category { Name = "Đồ uống" }
         });
         await context.SaveChangesAsync();
+    }
+
+    // Đảm bảo secondary admin cũng tồn tại
+    var secondaryAdmin = await userManager.FindByEmailAsync(secondaryAdminEmail);
+    if (secondaryAdmin == null) {
+        secondaryAdmin = new ApplicationUser { UserName = secondaryAdminEmail, Email = secondaryAdminEmail, EmailConfirmed = true, FullName = "HuuTri Admin" };
+        await userManager.CreateAsync(secondaryAdmin, secondaryAdminPassword);
+        await userManager.AddToRoleAsync(secondaryAdmin, "Admin");
     }
 }
 // -------------------------------------------------------------

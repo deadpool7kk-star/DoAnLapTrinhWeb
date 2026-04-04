@@ -8,13 +8,12 @@
   <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
+<body class="admin-body">
 
 <!-- ══ SIDEBAR ══ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <a href="#">VERMEIL<sup>®</sup></a>
-    <p>Admin Dashboard</p>
+    <a asp-area="" asp-controller="Home" asp-action="Index">VERMEIL<sup>®</sup></a>
   </div>
 
   <nav class="sidebar-nav">
@@ -40,7 +39,7 @@
     </a>
 
     <div class="nav-section-label">Hệ Thống</div>
-    <a href="#" class="nav-item">
+    <a asp-area="" asp-controller="AdminSettings" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminSettings" ? "active" : "")">
       <span class="nav-icon">⚙️</span> Cài Đặt
     </a>
   </nav>
@@ -51,13 +50,13 @@
   @inject UserManager<ApplicationUser> UserManager
 
   <div class="sidebar-footer">
-    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ">
+    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ" style="text-decoration:none; color:inherit;">
       <div class="admin-info">
         <div class="admin-avatar">👑</div>
         <div class="admin-detail">
           @{
               var currentUser = await UserManager.GetUserAsync(User);
-              var displayName = currentUser?.FullName ?? "Admin";
+              var displayName = currentUser?.FullName ?? "HuuTriAdmin";
           }
           <strong>@displayName</strong>
           <span>Super Admin</span>
@@ -65,7 +64,7 @@
       </div>
     </a>
     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
-        <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ Đăng Xuất</button>
+        <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ ĐĂNG XUẤT</button>
     </form>
   </div>
 </aside>
@@ -74,8 +73,10 @@
 <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h1>@ViewData["Title"]</h1>
-      <p>Vermeil Fine Dining · Hệ thống quản trị cao cấp</p>
+      <div class="topbar-title-wrap">
+          <h1>@(ViewData["Title"] ?? "Admin Dashboard")</h1>
+          <p>Vermeil Fine Dining · Hệ thống quản trị cao cấp</p>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="topbar-search">

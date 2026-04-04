@@ -93,7 +93,17 @@ namespace DoAnLapTrinhWeb.Controllers
 
             if (reservation != null)
             {
-                // Nếu đơn đặt bàn đang gắn với một bàn, giải phóng bàn đó về trạng thái "Available"
+                // 1. Giải quyết xung đột khóa ngoại: Tìm các hóa đơn liên quan và gỡ bỏ liên kết ReservationId
+                var relatedInvoices = await _context.Invoices.Where(i => i.ReservationId == id).ToListAsync();
+                foreach (var inv in relatedInvoices)
+                {
+                    inv.ReservationId = null; // Gỡ bỏ liên kết để có thể xóa Reservation mà không lỗi FK
+                }
+
+                // 2. Phải SaveChanges cho hóa đơn trước hoặc đồng thời với việc xóa Reservation
+                // Tuy nhiên trong EF, nếu ta dùng cùng một context, nó sẽ tự xử lý thứ tự.
+
+                // 3. Giải phóng bàn nếu đang ở trạng thái gắn bàn
                 if (reservation.TableId.HasValue && reservation.Table != null)
                 {
                     reservation.Table.Status = "Available";
