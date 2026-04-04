@@ -1,5 +1,7 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Dish>
 @{
     ViewData["Title"] = "Trang Chủ";
+    var categories = ViewBag.Categories as IEnumerable<DoAnLapTrinhWeb.Models.Category> ?? new List<DoAnLapTrinhWeb.Models.Category>();
 }
 <section id="hero">
   <div class="hero-bg"></div>
@@ -37,50 +39,51 @@
     <h2 class="section-title">Tinh Hoa <em>Ẩm Thực</em></h2>
     <p>Mỗi món ăn là một tác phẩm được chắt lọc từ nguyên liệu tươi sạch nhất, chế biến bởi đội ngũ bếp trưởng đẳng cấp quốc tế.</p>
   </div>
-  <div class="menu-tabs">
-    <button class="tab-btn active">Tất Cả</button>
-    <button class="tab-btn">Khai Vị</button>
-    <button class="tab-btn">Món Chính</button>
-    <button class="tab-btn">Tráng Miệng</button>
-    <button class="tab-btn">Đồ Uống</button>
+  <div class="menu-tabs" id="menuTabs">
+    <button class="tab-btn active" data-filter="all">Tất Cả</button>
+    @foreach(var cat in categories)
+    {
+        <button class="tab-btn" data-filter="@cat.Name">@cat.Name</button>
+    }
   </div>
-  <div class="menu-grid">
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🥗</div><span class="menu-badge dim">Khai Vị</span></div>
-      <h4>Salad Rau Mầm Hữu Cơ</h4>
-      <p>Hỗn hợp rau mầm tươi với sốt dầu mè, phủ hạt thông rang và phô mai parmesan bào mỏng tinh tế.</p>
-      <div class="menu-card-footer"><span class="price">85.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍤</div><span class="menu-badge red">Phổ Biến</span></div>
-      <h4>Tôm Sú Nướng Thảo Mộc</h4>
-      <p>Tôm sú tươi nướng than hoa với bơ tỏi thảo mộc Địa Trung Hải, dùng kèm bánh mì baguette giòn.</p>
-      <div class="menu-card-footer"><span class="price">145.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🐟</div><span class="menu-badge gold">Mới</span></div>
-      <h4>Cá Hồi Sốt Chanh Bơ</h4>
-      <p>Fillet cá hồi Na Uy áp chảo vàng, phục vụ với măng tây Pháp và khoai tây nghiền kem tươi thượng hạng.</p>
-      <div class="menu-card-footer"><span class="price">295.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🥩</div><span class="menu-badge gold">Signature</span></div>
-      <h4>Bò Wagyu A5 Áp Chảo</h4>
-      <p>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</p>
-      <div class="menu-card-footer"><span class="price">480.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍝</div><span class="menu-badge dim">Chef's Pick</span></div>
-      <h4>Pasta Nấm Truffle Đen</h4>
-      <p>Linguine tươi xào với nấm rừng hỗn hợp, dầu truffle đen Périgord và kem tươi Pháp thượng hạng.</p>
-      <div class="menu-card-footer"><span class="price">225.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍮</div><span class="menu-badge gold">Mới</span></div>
-      <h4>Panna Cotta Vanilla Bourbon</h4>
-      <p>Panna cotta kem tươi hương vanilla Madagascar, coulis dâu tây tươi và lá bạc hà kết hợp hài hoà.</p>
-      <div class="menu-card-footer"><span class="price">95.000₫</span><button class="add-btn">+</button></div>
-    </div>
+  <div class="menu-grid" id="menuGrid">
+    @foreach(var item in Model)
+    {
+        <div class="menu-card" data-category="@(item.Category?.Name)">
+          <div class="menu-card-top">
+            <div class="menu-icon">
+                @if(!string.IsNullOrEmpty(item.ImageUrl))
+                {
+                    <img src="@item.ImageUrl" alt="@item.Name" style="width:100%; height:100%; object-fit:cover; border-radius:10px; transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);" />
+                }
+                else
+                {
+                    @(item.Icon ?? "🍽️")
+                }
+            </div>
+            @if(!string.IsNullOrEmpty(item.Badge))
+            {
+                <span class="menu-badge @(item.Badge.ToLower() == "signature" ? "gold" : (item.Badge.ToLower() == "mới" ? "gold" : "dim"))">@item.Badge</span>
+            }
+          </div>
+          <h4>@item.Name</h4>
+          <p>@item.Description</p>
+          <div class="menu-card-footer">
+            <div class="price-wrap">
+                @if(item.DiscountPercentage > 0)
+                {
+                    <span class="price-old">@item.Price.ToString("N0")₫</span>
+                    <span class="price">@item.DiscountedPrice.ToString("N0")₫</span>
+                }
+                else
+                {
+                    <span class="price">@item.Price.ToString("N0")₫</span>
+                }
+            </div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+    }
   </div>
 </section>
 
@@ -203,3 +206,101 @@
     </div>
   </div>
 </section>
+
+<style>
+  /* Cập nhật Kích thước Ảnh Menu (Hình vuông vừa phải) */
+  .menu-card-top {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto 12px; /* Giảm khoảng cách dưới ảnh */
+    display: flex;
+    justify-content: center;
+  }
+  #menuGrid .menu-icon {
+    width: 130px !important; /* Trả lại kích thước vừa phải */
+    height: 130px !important;
+    border-radius: 10px;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  #menuGrid .menu-badge {
+    position: absolute;
+    top: -15px; /* Đưa nhãn cao hẳn ra ngoài góc ảnh */
+    right: -15px; /* Đưa nhãn ngang hẳn ra ngoài góc ảnh */
+    z-index: 10;
+    margin: 0;
+    transform: scale(0.85);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4); /* Thêm bóng đổ để tách biệt với ảnh */
+    pointer-events: none;
+  }
+  #menuGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; /* Thu hẹp khoảng cách giữa các thẻ món ăn */
+    justify-items: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+  #menuGrid .menu-card {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Đảm bảo thẻ tự động mở rộng theo grid-cell */
+    min-width: 280px; 
+    max-width: 320px;
+  }
+  #menuGrid .menu-card:hover {
+    background: rgba(255,255,255,0.03);
+    transform: translateY(-8px);
+    border-color: rgba(201,168,76,0.6);
+  }
+  #menuGrid .menu-card h4 { margin: 10px 0 5px; font-size: 1.15rem; color: var(--gold); }
+  #menuGrid .menu-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; flex: 1; margin-bottom: 15px; }
+  .menu-card-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+  
+  .price-wrap { display: flex; flex-direction: column; }
+  .price-old { text-decoration: line-through; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 2px; }
+  .price { color: var(--gold); font-weight: 600; font-size: 1.1rem; }
+
+  /* Lọc món ăn hiệu ứng mượt mà */
+  .menu-card.hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('#menuTabs .tab-btn');
+    const grid = document.getElementById('menuGrid');
+    
+    if (tabs && grid) {
+      const cards = grid.querySelectorAll('.menu-card');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const filter = tab.getAttribute('data-filter');
+
+          cards.forEach(card => {
+            if (filter === 'all' || card.getAttribute('data-category') === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+    }
+  });
+</script>
