@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using DoAnLapTrinhWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +18,12 @@ namespace DoAnLapTrinhWeb.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var categories = await _context.Categories
+                .Include(c => c.Dishes)
+                .ToListAsync();
+            return View(categories);
         }
 
         [HttpPost]

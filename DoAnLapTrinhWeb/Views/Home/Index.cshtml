@@ -1,3 +1,4 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Category>
 @{
     ViewData["Title"] = "Trang Chủ";
 }
@@ -38,49 +39,48 @@
     <p>Mỗi món ăn là một tác phẩm được chắt lọc từ nguyên liệu tươi sạch nhất, chế biến bởi đội ngũ bếp trưởng đẳng cấp quốc tế.</p>
   </div>
   <div class="menu-tabs">
-    <button class="tab-btn active">Tất Cả</button>
-    <button class="tab-btn">Khai Vị</button>
-    <button class="tab-btn">Món Chính</button>
-    <button class="tab-btn">Tráng Miệng</button>
-    <button class="tab-btn">Đồ Uống</button>
+    <button class="tab-btn active" data-filter="all">Tất Cả</button>
+    @foreach (var category in Model)
+    {
+        <button class="tab-btn" data-filter="cat-@category.Id">@category.Name</button>
+    }
   </div>
   <div class="menu-grid">
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🥗</div><span class="menu-badge dim">Khai Vị</span></div>
-      <h4>Salad Rau Mầm Hữu Cơ</h4>
-      <p>Hỗn hợp rau mầm tươi với sốt dầu mè, phủ hạt thông rang và phô mai parmesan bào mỏng tinh tế.</p>
-      <div class="menu-card-footer"><span class="price">85.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍤</div><span class="menu-badge red">Phổ Biến</span></div>
-      <h4>Tôm Sú Nướng Thảo Mộc</h4>
-      <p>Tôm sú tươi nướng than hoa với bơ tỏi thảo mộc Địa Trung Hải, dùng kèm bánh mì baguette giòn.</p>
-      <div class="menu-card-footer"><span class="price">145.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🐟</div><span class="menu-badge gold">Mới</span></div>
-      <h4>Cá Hồi Sốt Chanh Bơ</h4>
-      <p>Fillet cá hồi Na Uy áp chảo vàng, phục vụ với măng tây Pháp và khoai tây nghiền kem tươi thượng hạng.</p>
-      <div class="menu-card-footer"><span class="price">295.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🥩</div><span class="menu-badge gold">Signature</span></div>
-      <h4>Bò Wagyu A5 Áp Chảo</h4>
-      <p>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</p>
-      <div class="menu-card-footer"><span class="price">480.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍝</div><span class="menu-badge dim">Chef's Pick</span></div>
-      <h4>Pasta Nấm Truffle Đen</h4>
-      <p>Linguine tươi xào với nấm rừng hỗn hợp, dầu truffle đen Périgord và kem tươi Pháp thượng hạng.</p>
-      <div class="menu-card-footer"><span class="price">225.000₫</span><button class="add-btn">+</button></div>
-    </div>
-    <div class="menu-card">
-      <div class="menu-card-top"><div class="menu-icon">🍮</div><span class="menu-badge gold">Mới</span></div>
-      <h4>Panna Cotta Vanilla Bourbon</h4>
-      <p>Panna cotta kem tươi hương vanilla Madagascar, coulis dâu tây tươi và lá bạc hà kết hợp hài hoà.</p>
-      <div class="menu-card-footer"><span class="price">95.000₫</span><button class="add-btn">+</button></div>
-    </div>
+    @foreach (var category in Model)
+    {
+        @foreach (var dish in category.Dishes.Where(d => d.IsVisible))
+        {
+            <div class="menu-card" data-category="cat-@category.Id">
+                <div class="menu-card-top">
+                    <div class="menu-icon">@(string.IsNullOrEmpty(dish.Icon) ? "🍽️" : dish.Icon)</div>
+                    @if (dish.DiscountPercentage > 0)
+                    {
+                        <span class="menu-badge red">SALE -@dish.DiscountPercentage%</span>
+                    }
+                    else if (!string.IsNullOrEmpty(dish.Badge))
+                    {
+                        <span class="menu-badge gold">@dish.Badge</span>
+                    }
+                </div>
+                <h4>@dish.Name</h4>
+                <p>@dish.Description</p>
+                <div class="menu-card-footer">
+                    <div class="price-wrap">
+                        @if (dish.DiscountPercentage > 0)
+                        {
+                            <span class="price-old">@dish.Price.ToString("N0")₫</span>
+                            <span class="price">@dish.DiscountedPrice.ToString("N0")₫</span>
+                        }
+                        else
+                        {
+                            <span class="price">@dish.Price.ToString("N0")₫</span>
+                        }
+                    </div>
+                    <button class="add-btn">+</button>
+                </div>
+            </div>
+        }
+    }
   </div>
 </section>
 
@@ -203,3 +203,37 @@
     </div>
   </div>
 </section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.getAttribute('data-filter');
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Filter menu cards
+                document.querySelectorAll('.menu-card').forEach(card => {
+                    if (card.getAttribute('data-category') === filter || filter === 'all') {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    .price-wrap { display: flex; flex-direction: column; }
+    .price-old { 
+        font-size: 0.8rem; 
+        text-decoration: line-through; 
+        color: rgba(255,255,255,0.4); 
+        margin-bottom: -4px;
+    }
+    .price { color: var(--gold-light) !important; font-weight: 700; font-family: 'Playfair Display', serif; }
+</style>

@@ -30,10 +30,16 @@ namespace DoAnLapTrinhWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Dish dish)
         {
+            ModelState.Remove("Category");
             if (ModelState.IsValid)
             {
                 dish.CreatedAt = DateTime.Now;
                 dish.UpdatedAt = DateTime.Now;
+                // Xử lý chống lỗi NULL cho các cột mới
+                dish.Description ??= "";
+                dish.Badge ??= "";
+                dish.Icon ??= "";
+                
                 _context.Add(dish);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -41,37 +47,44 @@ namespace DoAnLapTrinhWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /AdminMenu/Edit/5
+        // POST: /AdminMenu/Edit
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Dish dish)
+        public async Task<IActionResult> Edit(Dish dish)
         {
-            if (id != dish.Id)
-            {
-                return NotFound();
-            }
-
+            // Loại bỏ hoàn toàn validation cho các trường điều hướng và trường không bắt buộc
+            ModelState.Remove("Category");
+            
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var existingDish = await _context.Dishes.AsNoTracking().FirstOrDefaultAsync(d => d.Id == id);
+                    var existingDish = await _context.Dishes.AsNoTracking().FirstOrDefaultAsync(d => d.Id == dish.Id);
                     if (existingDish != null)
                     {
+                        // Giữ nguyên ngày tạo ban đầu
                         dish.CreatedAt = existingDish.CreatedAt;
+                        // Cập nhật ngày sửa mới nhất
                         dish.UpdatedAt = DateTime.Now;
+
+                        // Xử lý chống lỗi NULL cho các cột bắt buộc trong Database
+                        dish.Description ??= "";
+                        dish.Badge ??= "";
+                        dish.Icon ??= "";
+                        
                         _context.Update(dish);
                         await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
                     }
+                    return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DishExists(dish.Id))
-                        return NotFound();
-                    else
-                        throw;
+                    if (!DishExists(dish.Id)) return NotFound();
+                    else throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
+            
+            // Nếu có lỗi, reload trang Index
             return RedirectToAction(nameof(Index));
         }
 

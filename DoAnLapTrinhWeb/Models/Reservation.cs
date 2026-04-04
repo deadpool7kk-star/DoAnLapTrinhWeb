@@ -32,6 +32,9 @@ namespace DoAnLapTrinhWeb.Models
         public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
 
         public string? UserId { get; set; }
+        
+        public int? TableId { get; set; }
+        public virtual RestaurantTable? Table { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

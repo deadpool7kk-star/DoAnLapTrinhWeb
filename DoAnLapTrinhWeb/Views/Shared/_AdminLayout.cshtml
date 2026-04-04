@@ -6,6 +6,7 @@
   <title>@ViewData["Title"] — Vermeil Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -19,27 +20,23 @@
   <nav class="sidebar-nav">
     <div class="nav-section-label">Tổng Quan</div>
     <a asp-area="" asp-controller="AdminReservations" asp-action="Index" class="nav-item">
-      <span class="nav-icon">📅</span> Đặt Bàn
+      <span class="nav-icon">📅</span> Đơn Đặt Bàn
     </a>
 
     <div class="nav-section-label">Thực Đơn</div>
-    <a asp-area="" asp-controller="AdminMenu" asp-action="Index" class="nav-item">
+    <a asp-area="" asp-controller="AdminMenu" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminMenu" ? "active" : "")">
       <span class="nav-icon">🍽️</span> Quản Lý Món Ăn
     </a>
-    <a href="#" class="nav-item">
+    <a asp-area="" asp-controller="AdminPromotions" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPromotions" ? "active" : "")">
       <span class="nav-icon">🏷️</span> Giá & Khuyến Mãi
     </a>
 
     <div class="nav-section-label">Vận Hành</div>
-    <a asp-area="" asp-controller="AdminTables" asp-action="Index" class="nav-item">
+    <a asp-area="" asp-controller="AdminTables" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTables" ? "active" : "")">
       <span class="nav-icon">🪑</span> Sơ Đồ Bàn
     </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">📦</span> Đơn Đặt Bàn
-      <span class="nav-badge">5</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">📈</span> Doanh Thu
+    <a asp-area="" asp-controller="AdminInvoices" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminInvoices" ? "active" : "")">
+      <span class="nav-icon">📈</span> Hóa Đơn
     </a>
 
     <div class="nav-section-label">Hệ Thống</div>
@@ -77,13 +74,13 @@
 <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h1>Quản Lý Thực Đơn</h1>
-      <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+      <h1>@ViewData["Title"]</h1>
+      <p>Vermeil Fine Dining · Hệ thống quản trị cao cấp</p>
     </div>
     <div class="topbar-right">
       <div class="topbar-search">
         <span>🔍</span>
-        <input type="text" placeholder="Tìm kiếm món ăn..."/>
+        <input type="text" id="topbarSearch" placeholder="Tìm kiếm món ăn..."/>
       </div>
       @await Component.InvokeAsync("NotificationBell")
     </div>

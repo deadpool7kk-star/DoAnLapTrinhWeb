@@ -110,7 +110,6 @@ namespace DoAnLapTrinhWeb.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {

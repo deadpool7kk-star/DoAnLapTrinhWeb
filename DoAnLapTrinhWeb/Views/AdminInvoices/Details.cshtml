@@ -1,0 +1,194 @@
+@model DoAnLapTrinhWeb.Models.Invoice
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Chi Tiết Hóa Đơn #" + Model.Id.ToString("D5");
+}
+
+<div class="page-body">
+    <div class="section-header d-print-none">
+        <div class="section-header-left">
+            <h2>Hóa Đơn Chi Tiết</h2>
+            <p>Mã quản lý: #INV-@Model.Id.ToString("D5") — Trạng thái: @(Model.Status == "Paid" ? "Đã thanh toán" : "Chưa thanh toán")</p>
+        </div>
+        <div class="section-header-right">
+            <a asp-action="Index" class="btn-filter">
+                <span>←</span> Quay lại danh sách
+            </a>
+            <button onclick="window.print()" class="btn-add">
+                <span>🖨️</span> In Hóa Đơn
+            </button>
+            @if (Model.Status != "Paid")
+            {
+                <button onclick="confirmPayment(@Model.Id)" class="btn-add" style="background: linear-gradient(135deg, #17ad37 0%, #98ec2d 100%);">
+                    <span>✅</span> Xác Nhận Thanh Toán
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="row justify-content-center" style="display: flex; justify-content: center; margin-top: 20px;">
+        <div style="width: 100%; max-width: 800px;">
+            <!-- Receipt Area (Simulation of Paper) -->
+            <div class="receipt-paper" id="printable-invoice">
+                <!-- Receipt Header -->
+                <div class="receipt-header">
+                    <h1 class="restaurant-name">VERMEIL FINE DINING</h1>
+                    <p class="restaurant-info">123 Đường Sông Hàn, Đà Nẵng — Hotline: 0905 123 456</p>
+                    <div class="receipt-divider"></div>
+                    <h2 class="receipt-title">PHIẾU THANH TOÁN</h2>
+                    <p class="receipt-meta">Số HĐ: #INV-@Model.Id.ToString("D5") | Ngày: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="receipt-details">
+                    <div class="detail-row">
+                        <span class="label">Khách Hàng:</span>
+                        <span class="value">@Model.CustomerName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Vị trí / Bàn:</span>
+                        <span class="value">@(Model.Table != null ? "Bàn " + Model.Table.Name + " (Lầu " + Model.Table.Floor + ")" : "Mang về / Vãng lai")</span>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th align="left">Tên Món</th>
+                            <th align="center">Đơn Giá</th>
+                            <th align="center">Giảm</th>
+                            <th align="center">SL</th>
+                            <th align="right">Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.InvoiceItems)
+                        {
+                            <tr>
+                                <td>@item.DishName</td>
+                                <td align="center">@item.OriginalPrice.ToString("N0")</td>
+                                <td align="center">-@item.DiscountPercentage%</td>
+                                <td align="center">@item.Quantity</td>
+                                <td align="right">@((item.UnitPrice * item.Quantity).ToString("N0"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Summary -->
+                <div class="receipt-summary">
+                    <div class="summary-line">
+                        <span>Tạm tính (chưa giảm):</span>
+                        <span>@Model.InvoiceItems.Sum(i => i.OriginalPrice * i.Quantity).ToString("N0") VNĐ</span>
+                    </div>
+                    <div class="summary-line discount">
+                        <span>Tổng giảm giá:</span>
+                        <span>-@Model.InvoiceItems.Sum(i => (i.OriginalPrice - i.UnitPrice) * i.Quantity).ToString("N0") VNĐ</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>TỔNG CỘNG:</span>
+                        <span>@Model.TotalAmount.ToString("N0") VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="receipt-footer">
+                    <p>Cảm ơn quý khách và hẹn gặp lại!</p>
+                    <p class="premium-text">The Vermeil Signature Experience</p>
+                    <div class="qr-code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Invoice-@Model.Id" alt="QR Code">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Receipt Styling - Paper look inside dashboard */
+    .receipt-paper {
+        background: #fff;
+        color: #000;
+        padding: 60px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        font-family: 'Playfair Display', serif;
+        position: relative;
+    }
+    
+    .receipt-header { text-align: center; margin-bottom: 40px; }
+    .restaurant-name { 
+        font-weight: 700; 
+        letter-spacing: 0.2em; 
+        margin-bottom: 5px;
+        font-size: 1.8rem;
+    }
+    .restaurant-info { font-size: 0.8rem; color: #666; font-family: 'Jost', sans-serif; }
+    .receipt-divider { height: 1px; background: #eee; margin: 30px 0; border-bottom: 1px dashed #000; }
+    .receipt-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
+    .receipt-meta { font-size: 0.75rem; color: #888; font-family: 'Jost', sans-serif; }
+
+    .receipt-details { margin-bottom: 30px; font-family: 'Jost', sans-serif; }
+    .detail-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+    .detail-row .label { color: #888; }
+    .detail-row .value { font-weight: 600; }
+
+    .receipt-table { width: 100%; border-collapse: collapse; font-family: 'Jost', sans-serif; }
+    .receipt-table th { border-bottom: 1px solid #000; padding: 10px 0; font-size: 0.75rem; text-transform: uppercase; }
+    .receipt-table td { padding: 12px 0; font-size: 0.85rem; border-bottom: 1px solid #f9f9f9; }
+
+    .receipt-summary { margin-top: 30px; font-family: 'Jost', sans-serif; }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+    .summary-line.discount { color: #d63031; }
+    .summary-line.total { margin-top: 15px; font-size: 1.4rem; font-weight: 700; color: #000; border-top: 2px solid #000; padding-top: 10px; }
+
+    .receipt-footer { text-align: center; margin-top: 60px; font-family: 'Jost', sans-serif; }
+    .receipt-footer p { font-size: 0.85rem; margin-bottom: 5px; }
+    .premium-text { color: #888; font-style: italic; font-size: 0.75rem; }
+    .qr-code { margin-top: 25px; opacity: 0.7; }
+    .qr-code img { width: 80px; }
+
+    @@media print {
+        .d-print-none, .sidebar, .topbar { display: none !important; }
+        .main { margin-left: 0 !important; }
+        .page-body { padding: 0 !important; }
+        body { background: #fff !important; }
+        .receipt-paper { box-shadow: none !important; padding: 0 !important; }
+        .row { margin: 0 !important; }
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmPayment(id) {
+            Swal.fire({
+                title: 'Xác nhận thanh toán',
+                text: "Đánh dấu hóa đơn này là đã nhận đủ tiền và hoàn tất bàn?",
+                icon: 'question',
+                background: '#1c1512',
+                color: '#f5ede0',
+                showCancelButton: true,
+                confirmButtonColor: '#c9a84c',
+                cancelButtonColor: '#7a1515',
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Đóng'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/AdminInvoices/MarkAsPaid/' + id, function(data) {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                background: '#1c1512',
+                                color: '#f5ede0',
+                                confirmButtonColor: '#c9a84c'
+                            }).then(() => location.reload());
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+}

@@ -1,0 +1,151 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Invoice>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản Lý Doanh Thu";
+}
+
+<div class="page-body">
+    <!-- Revenue Statistics -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">💰</div>
+                <div class="stat-trend">Thực nhận</div>
+            </div>
+            <div class="stat-card-num">@ViewBag.TotalRevenue.ToString("N0")</div>
+            <div class="stat-card-label">Tổng Doanh Thu (VNĐ)</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">📄</div>
+                <div class="stat-trend">Hệ thống</div>
+            </div>
+            <div class="stat-card-num">@ViewBag.InvoiceCount</div>
+            <div class="stat-card-label">Tổng số hóa đơn</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">✅</div>
+                <div class="stat-trend" style="color: #7ecda0;">Hoàn thành</div>
+            </div>
+            <div class="stat-card-num">@ViewBag.PaidCount</div>
+            <div class="stat-card-label">Đã thanh toán</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">⏳</div>
+                <div class="stat-trend" style="color: #e2c47a;">Chờ xử lý</div>
+            </div>
+            <div class="stat-card-num">@(ViewBag.InvoiceCount - ViewBag.PaidCount)</div>
+            <div class="stat-card-label">Chưa thanh toán</div>
+        </div>
+    </div>
+
+    <!-- Section Header -->
+    <div class="section-header mt-5">
+        <div class="section-header-left">
+            <h2>Lịch Sử Hóa Đơn</h2>
+            <p>Danh sách chi tiết các giao dịch trong hệ thống</p>
+        </div>
+        <div class="section-header-right">
+             <a asp-action="Create" class="btn-add">
+                <span>+</span> Tạo Hóa Đơn Mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Khách Hàng</th>
+                    <th>Bàn / Vị Trí</th>
+                    <th style="text-align: center;">Ngày Lập</th>
+                    <th style="text-align: center;">Tổng Tiền</th>
+                    <th style="text-align: center;">Trạng Thái</th>
+                    <th style="text-align: center;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="td-dish">
+                                <div class="td-icon">👤</div>
+                                <div class="td-dish-info">
+                                    <div class="td-dish-name">@item.CustomerName</div>
+                                    <div class="td-dish-cat">#INV-@item.Id.ToString("D5")</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="color: var(--text-soft);">@(item.Table?.Name ?? "Mang về / Vãng lai")</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="text-muted" style="font-size: 0.8rem;">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="price-cell">@item.TotalAmount.ToString("N0") VNĐ</span>
+                        </td>
+                        <td style="text-align: center;">
+                            @if (item.Status == "Paid")
+                            {
+                                <span class="status-badge active">Đã Thanh Toán</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge hidden">Chưa Thanh Toán</span>
+                            }
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="action-group">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn-view" title="Xem chi tiết">
+                                    👁️
+                                </a>
+                                @if (item.Status != "Paid")
+                                {
+                                    <button onclick="markAsPaid(@item.Id)" class="btn-edit" title="Thanh toán">
+                                        💰
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function markAsPaid(id) {
+            Swal.fire({
+                title: 'Xác nhận thanh toán',
+                text: "Bạn có chắc muốn đánh dấu hóa đơn này đã thanh toán?",
+                icon: 'question',
+                background: '#1c1512',
+                color: '#f5ede0',
+                showCancelButton: true,
+                confirmButtonColor: '#c9a84c',
+                cancelButtonColor: '#7a1515',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/AdminInvoices/MarkAsPaid/' + id, function(data) {
+                        if (data.success) {
+                            location.reload();
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+}

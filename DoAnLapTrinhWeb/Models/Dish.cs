@@ -16,21 +16,27 @@ namespace DoAnLapTrinhWeb.Models
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public virtual Category Category { get; set; }
+        public virtual Category? Category { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập giá")]
         public decimal Price { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [StringLength(50)]
-        public string Badge { get; set; } // Ví dụ: Mới, Signature, Phổ Biến...
+        public string? Badge { get; set; } // Ví dụ: Mới, Signature, Phổ Biến...
 
         [StringLength(50)]
-        public string Icon { get; set; } // Ví dụ: 🥩, 🐟, 🍝
+        public string? Icon { get; set; } // Ví dụ: 🥩, 🐟, 🍝
 
         public bool IsVisible { get; set; } = true;
 
+        public int? DiscountPercentage { get; set; } // Ví dụ: 10, 20... (phần trăm giảm)
+
+        [NotMapped]
+        public decimal DiscountedPrice => DiscountPercentage.HasValue 
+            ? Price * (1 - (decimal)DiscountPercentage.Value / 100) 
+            : Price;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

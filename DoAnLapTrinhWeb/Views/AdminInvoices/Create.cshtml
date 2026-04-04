@@ -1,0 +1,343 @@
+@model DoAnLapTrinhWeb.Models.Invoice
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Tạo Hóa Đơn Mới";
+}
+
+<div class="page-body" id="billing-app">
+    <div class="section-header">
+        <div class="section-header-left">
+            <h2>Lập Hóa Đơn Mới</h2>
+            <p>Chọn món ăn và gán bàn để tạo hóa đơn thanh toán</p>
+        </div>
+        <div class="section-header-right">
+            <a asp-action="Index" class="btn-filter"> Quay Lại</a>
+        </div>
+    </div>
+
+    <div class="row" style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 24px; align-items: start;">
+        <!-- Left Column: Billing Details -->
+        <div>
+            <div class="table-wrap" style="padding: 30px; background: var(--black-3);">
+                <div class="form-row-2">
+                    <div class="form-group-m">
+                        <label>Khách Hàng</label>
+                        <input type="text" id="customer-name" placeholder="Tên khách hàng..." value="@ViewBag.CustomerName">
+                        @Html.AntiForgeryToken()
+                    </div>
+                    <div class="form-group-m">
+                        <label>Vị Trí / Bàn</label>
+                        <select id="table-id">
+                            <option value="">--- Chọn bàn (Tùy chọn) ---</option>
+                            @foreach (var table in ViewBag.Tables)
+                            {
+                                if (ViewBag.SelectedTableId == table.Id)
+                                {
+                                    <option value="@table.Id" selected>@table.Name - Lầu @table.Floor (@table.Capacity người)</option>
+                                }
+                                else
+                                {
+                                    <option value="@table.Id">@table.Name - Lầu @table.Floor (@table.Capacity người)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h4 style="font-size: 0.9rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px;">Danh Sách Món Chọn</h4>
+                    <div style="border-top: 1px solid rgba(201,168,76,0.15); margin-bottom: 0;">
+                        <table class="table" style="background: transparent;">
+                            <thead>
+                                <tr style="background: rgba(201,168,76,0.05);">
+                                    <th style="color: var(--text-muted); font-size: 0.7rem;">Món Ăn</th>
+                                    <th style="text-align: center; color: var(--text-muted); font-size: 0.7rem;">Đơn Giá</th>
+                                    <th style="text-align: center; color: var(--text-muted); font-size: 0.7rem;">Giảm Giá</th>
+                                    <th style="text-align: center; color: var(--text-muted); font-size: 0.7rem;">Số Lượng</th>
+                                    <th style="text-align: center; color: var(--text-muted); font-size: 0.7rem;">Thành Tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="selected-dishes">
+                                <!-- Dynamic Rows via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px; border: 1px dashed rgba(201,168,76,0.2); margin-top: 10px;">
+                        <button type="button" class="btn-edit" style="width: auto; padding: 10px 30px;" onclick="document.getElementById('addDishModal').classList.add('show')">
+                            <span>+</span> Thêm Món Vào Hóa Đơn
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Summary & Payment -->
+        <div>
+            <div class="stat-card" style="position: sticky; top: 100px; padding: 30px;">
+                <h3 style="font-family: 'Playfair Display', serif; color: var(--gold); margin-bottom: 20px; font-size: 1.4rem;">Tổng Kết Bill</h3>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem;">
+                    <span style="color: var(--text-muted);">Tạm tính:</span>
+                    <span id="summary-subtotal">0 VNĐ</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem;">
+                    <span style="color: var(--text-muted);">Khuyến mãi:</span>
+                    <span id="summary-discount" style="color: #e08080;">0 VNĐ</span>
+                </div>
+                
+                <div style="height: 1px; background: rgba(201,168,76,0.2); margin: 20px 0;"></div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <span style="color: var(--gold); font-weight: 500; font-size: 1rem;">TỔNG CỘNG:</span>
+                    <span id="summary-total" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;">0 VNĐ</span>
+                </div>
+
+                <div class="form-group-m" style="margin-bottom: 30px;">
+                    <label>Phương Thức Thanh Toán</label>
+                    <select id="payment-method">
+                        <option value="Cash">Tiền mặt (Cash)</option>
+                        <option value="Transfer">Chuyển khoản (Banking)</option>
+                        <option value="Card">Quẹt thẻ (POS)</option>
+                    </select>
+                </div>
+
+                <button type="button" id="btn-submit" class="btn-add" style="width: 100%; justify-content: center; height: 50px; font-size: 0.85rem;">
+                    Xác Nhận & Xuất Hóa Đơn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Dish Modal (Vermeil Theme Style) -->
+<div class="modal-overlay" id="addDishModal">
+    <div class="modal" style="max-width: 800px;">
+        <button class="modal-close" onclick="document.getElementById('addDishModal').classList.remove('show')">×</button>
+        <h3>Chọn Món Ăn</h3>
+        <p>Tìm kiếm và thêm món ăn vào hóa đơn hiện tại</p>
+
+        <div class="form-group-m" style="margin-bottom: 20px;">
+            <input type="text" id="dish-search" placeholder="Nhập tên món ăn để tìm nhanh...">
+        </div>
+
+        <div class="table-wrap" style="max-height: 400px; overflow-y: auto;">
+            <table class="table">
+                <thead>
+                    <tr style="position: sticky; top: 0; z-index: 10;">
+                        <th>Sản phẩm</th>
+                        <th style="text-align: center;">Đơn Giá</th>
+                        <th style="text-align: center;">Ưu Đãi</th>
+                        <th style="text-align: center;">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="dish-selection-list">
+                    @foreach (var dish in ViewBag.Dishes)
+                    {
+                        <tr class="dish-row" data-name="@dish.Name.ToLower()">
+                            <td>
+                                <div class="td-dish">
+                                    <div class="td-icon">🥘</div>
+                                    <div class="td-dish-info">
+                                        <div class="td-dish-name">@dish.Name</div>
+                                        <div class="td-dish-cat">Phân loại món ăn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="price-cell">@dish.Price.ToString("N0")</span>
+                            </td>
+                            <td style="text-align: center;">
+                                @if (dish.DiscountPercentage > 0)
+                                {
+                                    <span class="status-badge active">Giảm @dish.DiscountPercentage%</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge hidden">Không</span>
+                                }
+                            </td>
+                             <td style="text-align: center;">
+                                <button type="button" class="btn-edit" 
+                                        onclick="addDish(@dish.Id, '@dish.Name', @((long)dish.Price), @(dish.DiscountPercentage ?? 0))">
+                                    Thêm
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button type="button" class="btn-modal-cancel" style="width: 100%;" onclick="document.getElementById('addDishModal').classList.remove('show')">Đóng Cửa Sổ</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let selectedItems = [];
+
+        function addDish(id, name, price, discount) {
+            const existing = selectedItems.find(i => i.dishId === id);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                selectedItems.push({
+                    dishId: id,
+                    name: name,
+                    price: price,
+                    discount: discount,
+                    quantity: 1
+                });
+            }
+            renderSelectedItems();
+            // Show toast or small feedback
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                background: '#120e0c',
+                color: '#c9a84c'
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'Đã thêm: ' + name
+            });
+        }
+
+        function removeDish(id) {
+            selectedItems = selectedItems.filter(i => i.dishId !== id);
+            renderSelectedItems();
+        }
+
+        function updateQuantity(id, qty) {
+            const item = selectedItems.find(i => i.dishId === id);
+            if (item) {
+                item.quantity = Math.max(1, parseInt(qty) || 1);
+                renderSelectedItems();
+            }
+        }
+
+        function renderSelectedItems() {
+            const tbody = $('#selected-dishes');
+            tbody.empty();
+
+            let subtotal = 0;
+            let totalDiscount = 0;
+
+            selectedItems.forEach(item => {
+                const finalUnitPrice = item.price * (1 - item.discount / 100);
+                const itemSubtotal = item.price * item.quantity;
+                const itemFinalTotal = finalUnitPrice * item.quantity;
+                const itemDiscount = itemSubtotal - itemFinalTotal;
+
+                subtotal += itemSubtotal;
+                totalDiscount += itemDiscount;
+
+                tbody.append(`
+                    <tr>
+                        <td>
+                            <div class="td-dish-name" style="padding-left: 10px;">${item.name}</div>
+                        </td>
+                        <td style="text-align: center; color: var(--text-soft);">${item.price.toLocaleString()}</td>
+                        <td style="text-align: center; color: #e08080;">-${item.discount}%</td>
+                        <td style="text-align: center;">
+                            <input type="number" class="identity-input" style="width: 70px; text-align: center; padding: 5px; height: 35px;" 
+                                   value="${item.quantity}" onchange="updateQuantity(${item.dishId}, this.value)">
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="price-cell">${itemFinalTotal.toLocaleString()} VNĐ</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="btn-delete" style="padding: 5px 10px; font-size: 0.6rem;" onclick="removeDish(${item.dishId})">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+
+            $('#summary-subtotal').text(subtotal.toLocaleString() + ' VNĐ');
+            $('#summary-discount').text('-' + totalDiscount.toLocaleString() + ' VNĐ');
+            $('#summary-total').text((subtotal - totalDiscount).toLocaleString() + ' VNĐ');
+        }
+
+        // Search in Modal
+        $('#dish-search').on('keyup', function() {
+            const val = $(this).val().toLowerCase();
+            $('.dish-row').each(function() {
+                const name = $(this).data('name');
+                $(this).toggle(name.includes(val));
+            });
+        });
+
+        // Submit Logic
+        $('#btn-submit').click(function() {
+            if (selectedItems.length === 0) {
+                Swal.fire({
+                    title: 'Giỏ hàng trống',
+                    text: 'Vui lòng chọn ít nhất một món ăn!',
+                    icon: 'warning',
+                    background: '#1c1512',
+                    color: '#f5ede0',
+                    confirmButtonColor: '#c9a84c'
+                });
+                return;
+            }
+
+            const data = {
+                customerName: $('#customer-name').val() || "Khách Vãng Lai",
+                tableId: $('#table-id').val() ? parseInt($('#table-id').val()) : null,
+                reservationId: @(ViewBag.ReservationId ?? "null"),
+                paymentMethod: $('#payment-method').val(),
+                items: selectedItems.map(i => ({ dishId: i.dishId, quantity: i.quantity }))
+            };
+
+            $.ajax({
+                url: '/AdminInvoices/Create',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Thành công',
+                            text: 'Đã lập hóa đơn và lưu trữ!',
+                            icon: 'success',
+                            background: '#1c1512',
+                            color: '#f5ede0',
+                            confirmButtonColor: '#c9a84c'
+                        }).then(() => {
+                            window.location.href = '/AdminInvoices/Details/' + res.invoiceId;
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Lỗi',
+                        text: 'Đã có lỗi xảy ra khi lưu hóa đơn.',
+                        icon: 'error',
+                        background: '#1c1512',
+                        color: '#f5ede0'
+                    });
+                }
+            });
+        });
+
+        // Toggle modal logic
+        window.onclick = function(event) {
+            let modal = document.getElementById('addDishModal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+            }
+        }
+    </script>
+}

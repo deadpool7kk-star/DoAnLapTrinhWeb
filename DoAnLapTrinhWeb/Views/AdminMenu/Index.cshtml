@@ -55,39 +55,40 @@
         ⚙ Lọc
       </button>
       <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('show')">
-        ＋ Thêm Món Mới
+        ＋ THÊM MÓN MỚI
       </button>
     </div>
   </div>
 
   <!-- TABS -->
-  <div class="tab-row">
-    <button class="tab active">Tất Cả (@Model.Count())</button>
-    @foreach(var cat in categories)
+  <div class="tab-row" id="categoryTabs">
+    <button class="tab active" data-filter="all">TẤT CẢ (@Model.Count())</button>
+    @foreach(var cat in categories.Where(c => c.Name != "Trạng Miệng"))
     {
-        <button class="tab">@cat.Name (@Model.Count(m => m.CategoryId == cat.Id))</button>
+        <button class="tab" data-filter="@cat.Name">@cat.Name.ToUpper() (@Model.Count(m => m.CategoryId == cat.Id))</button>
     }
   </div>
 
   <!-- TABLE -->
   <div class="table-wrap">
-    <table>
+    <table id="dishTable">
       <thead>
         <tr>
           <th>#</th>
-          <th>Tên Món</th>
-          <th>Danh Mục</th>
-          <th>Giá</th>
-          <th>Trạng Thái</th>
-          <th>Cập Nhật</th>
-          <th>Thao Tác</th>
+          <th>TÊN MÓN</th>
+          <th>DANH MỤC</th>
+          <th>GIÁ</th>
+          <th>TRẠNG THÁI</th>
+          <th>CẬP NHẬT</th>
+          <th>THAO TÁC</th>
         </tr>
       </thead>
       <tbody>
+        @{ int i = 1; }
         @foreach (var item in Model)
         {
-            <tr>
-              <td style="color:var(--text-muted);font-size:.78rem">@item.Id.ToString("D2")</td>
+            <tr data-category-name="@(item.Category?.Name)">
+              <td class="td-number" style="color:var(--text-muted);font-size:.78rem">@i.ToString("D2")</td>
               <td>
                 <div class="td-dish">
                   <div class="td-icon">@(string.IsNullOrEmpty(item.Icon) ? "🍽️" : item.Icon)</div>
@@ -113,22 +114,28 @@
               <td>
                 <div class="action-group">
                   <button class="btn-view">👁</button>
-                  <button class="btn-edit" onclick="openEditModal(@item.Id, '@item.Name', @item.CategoryId, @item.Price.ToString("0"), '@item.Description', '@item.Badge', @(item.IsVisible ? "true" : "false"), '@item.Icon')">✏ Sửa</button>
-                  <button class="btn-delete" onclick="openDeleteModal(@item.Id, '@item.Name')">✕ Xoá</button>
+                  <button class="btn-edit" onclick="openEditModal(@item.Id, '@item.Name', @item.CategoryId, @item.Price.ToString("0"), '@item.Description', '@item.Badge', @(item.IsVisible ? "true" : "false"), '@item.Icon')">✏ SỬA</button>
+                  <button class="btn-delete" onclick="openDeleteModal(@item.Id, '@item.Name')">✕ XOÁ</button>
                 </div>
               </td>
             </tr>
+            i++;
         }
         @if(!Model.Any()) {
             <tr>
-                <td colspan="7" style="text-align: center; color: var(--text-muted);">Chưa có món ăn nào trong thực đơn.</td>
+                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Chưa có món ăn nào trong thực đơn.</td>
             </tr>
         }
       </tbody>
     </table>
+    
+    <!-- PAGINATION -->
+    <div class="pagination">
+        <p id="paginationInfo" style="color:var(--text-muted); font-size: 0.85rem;">Hiển thị ... / ... món</p>
+        <div class="page-btns" id="paginationBtns"></div>
+    </div>
   </div>
 </div>
-
 <!-- ══ MODAL: THÊM MÓN ══ -->
 <div class="modal-overlay" id="modalAdd">
   <div class="modal">
@@ -186,7 +193,7 @@
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalAdd').classList.remove('show')">Huỷ</button>
-          <button type="submit" class="btn-modal-save">＋ Lưu Món Mới</button>
+          <button type="submit" class="btn-modal-save">＋ LƯU MÓN MỚI</button>
         </div>
     </form>
   </div>
@@ -197,7 +204,7 @@
   <div class="modal">
     <button type="button" class="modal-close" onclick="document.getElementById('modalEdit').classList.remove('show')">✕</button>
     <h3>Chỉnh Sửa Món Ăn</h3>
-    <p>Cập nhật thôngত্তি · Lưu để áp dụng thay đổi</p>
+    <p>Cập nhật thông tin · Lưu để áp dụng thay đổi</p>
 
     <form asp-action="Edit" method="post" id="formEdit">
         <input type="hidden" name="Id" id="editId" />
@@ -249,7 +256,7 @@
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalEdit').classList.remove('show')">Huỷ</button>
-          <button type="submit" class="btn-modal-save">✓ Lưu Thay Đổi</button>
+          <button type="submit" class="btn-modal-save">✓ LƯU THAY ĐỔI</button>
         </div>
     </form>
   </div>
@@ -265,8 +272,8 @@
     <form asp-action="Delete" method="post">
         <input type="hidden" name="id" id="delDishId" />
         <div class="modal-actions">
-          <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalDelete').classList.remove('show')">Huỷ Bỏ</button>
-          <button type="submit" class="btn-confirm-del">✕ Xác Nhận Xoá</button>
+          <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalDelete').classList.remove('show')">HUỶ BỎ</button>
+          <button type="submit" class="btn-confirm-del">✕ XÁC NHẬN XOÁ</button>
         </div>
     </form>
   </div>
@@ -274,6 +281,118 @@
 
 @section Scripts {
 <script>
+    const itemsPerPage = 5;
+    let currentPage = 1;
+    let currentFilter = 'all';
+
+    const tabs = document.querySelectorAll('#categoryTabs .tab');
+    const allRows = Array.from(document.querySelectorAll('#dishTable tbody tr[data-category-name]'));
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationBtns = document.getElementById('paginationBtns');
+
+    const searchInput = document.getElementById('topbarSearch');
+
+    function updateTable() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        // 1. Lọc theo category VÀ từ khóa tìm kiếm
+        const filteredRows = allRows.filter(row => {
+            // Lọc theo Category
+            const matchesCategory = (currentFilter === 'all' || row.getAttribute('data-category-name') === currentFilter);
+            
+            // Lọc theo Tên món
+            const dishName = row.querySelector('.td-dish-name')?.innerText.toLowerCase() || '';
+            const matchesSearch = dishName.includes(searchTerm);
+
+            return matchesCategory && matchesSearch;
+        });
+
+        const totalItems = filteredRows.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        // 2. Hiển thị hàng cho trang hiện tại
+        allRows.forEach(row => row.style.display = 'none');
+        
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = Math.min(start + itemsPerPage, totalItems);
+        
+        for (let i = start; i < end; i++) {
+            filteredRows[i].style.display = '';
+            // Cập nhật lại số thứ tự hiển thị (tùy chọn)
+            const numTd = filteredRows[i].querySelector('.td-number');
+            if(numTd) numTd.innerText = (i + 1).toString().padStart(2, '0');
+        }
+
+        // 3. Cập nhật text thông tin
+        if (totalItems === 0) {
+            paginationInfo.innerText = "Không tìm thấy món ăn nào";
+        } else {
+            paginationInfo.innerText = `Hiển thị ${start + 1}-${end} / ${totalItems} món`;
+        }
+
+        // 4. Render nút phân trang
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        paginationBtns.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        // Nút Prev
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.innerText = '<';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => { currentPage--; updateTable(); };
+        paginationBtns.appendChild(prevBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            btn.innerText = i;
+            btn.onclick = () => { currentPage = i; updateTable(); };
+            paginationBtns.appendChild(btn);
+        }
+
+        // Nút Next
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.innerText = '>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => { currentPage++; updateTable(); };
+        paginationBtns.appendChild(nextBtn);
+    }
+
+    // Sự kiện Tìm kiếm (Topbar)
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            updateTable();
+        });
+    }
+
+    // Sự kiện Click Tab
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            currentFilter = tab.getAttribute('data-filter');
+            currentPage = 1; // RESET VỀ TRANG 1
+            updateTable();
+            
+            // Cuộn nhẹ lên đầu bảng để người dùng thấy thay đổi
+            document.querySelector('.table-wrap').scrollTop = 0;
+        });
+    });
+
+    // Khởi tạo lần đầu
+    updateTable();
+
+    // ──────── QUẢN LÝ MODALS (Giữ nguyên) ────────
     function openEditModal(id, name, catId, price, desc, badge, isVisible, icon) {
         document.getElementById('editId').value = id;
         document.getElementById('editName').value = name;
