@@ -26,8 +26,11 @@ namespace DoAnLapTrinhWeb.Models
         [StringLength(50)]
         public string? Badge { get; set; } // Ví dụ: Mới, Signature, Phổ Biến...
 
+        [StringLength(255)]
+        public string? ImageUrl { get; set; } // Link đến tệp ảnh của món
+
         [StringLength(50)]
-        public string? Icon { get; set; } // Ví dụ: 🥩, 🐟, 🍝
+        public string? Icon { get; set; } // Ví dụ: 🥩, 🐟, 🍝 (Giữ lại dự phòng)
 
         public bool IsVisible { get; set; } = true;
 
