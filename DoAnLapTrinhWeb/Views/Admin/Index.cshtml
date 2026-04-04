@@ -48,12 +48,12 @@
         <p>Quản lý toàn bộ thực đơn nhà hàng</p>
       </div>
       <div class="section-header-right">
-        <button class="btn-filter" onclick="document.getElementById('modalAdd').classList.add('show')">
-          ⚙ Lọc
-        </button>
-        <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('show')">
-          ＋ Thêm Món Mới
-        </button>
+        <a asp-controller="AdminMenu" asp-action="Index" class="btn-filter" style="text-decoration:none; display:flex; align-items:center;">
+          🍽️ Quản Lý Thực Đơn
+        </a>
+        <a asp-controller="AdminReservations" asp-action="Index" class="btn-add" style="text-decoration:none; display:flex; align-items:center;">
+          📅 Xem Đặt Bàn
+        </a>
       </div>
     </div>
 

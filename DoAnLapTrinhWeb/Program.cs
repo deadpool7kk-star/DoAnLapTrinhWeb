@@ -66,8 +66,8 @@ using (var scope = app.Services.CreateScope())
         await roleManager.CreateAsync(new IdentityRole("Customer"));
     }
 
-    var adminEmail = "admin@test.com";
-    var adminPassword = "123"; // Mật khẩu bạn đã chọn
+    var adminEmail = "Triadmin@gmail.com";
+    var adminPassword = "Aa@123";
 
     var adminAccount = await userManager.FindByEmailAsync(adminEmail);
     if (adminAccount == null) {
@@ -75,9 +75,14 @@ using (var scope = app.Services.CreateScope())
             UserName = adminEmail, 
             Email = adminEmail,
             EmailConfirmed = true,
-            FullName = "Administrator"
+            FullName = "Administrator" // Gán FullName tránh lỗi null nếu migration yêu cầu
         };
         await userManager.CreateAsync(adminAccount, adminPassword); 
+    }
+
+    // Đảm bảo Role Admin tồn tại
+    if (!await roleManager.RoleExistsAsync("Admin")) {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
 
     // ÉP QUYỀN: Xóa role hiện có và add lại để chắc chắn
@@ -110,7 +115,7 @@ public class AdminAccountTransformer : Microsoft.AspNetCore.Authentication.IClai
     public Task<System.Security.Claims.ClaimsPrincipal> TransformAsync(System.Security.Claims.ClaimsPrincipal principal)
     {
         var identity = principal.Identity as System.Security.Claims.ClaimsIdentity;
-        if (identity != null && identity.IsAuthenticated && identity.Name != null && identity.Name.Equals("admin@test.com", StringComparison.OrdinalIgnoreCase))
+        if (identity != null && identity.IsAuthenticated && identity.Name != null && identity.Name.Equals("Triadmin@gmail.com", StringComparison.OrdinalIgnoreCase))
         {
             if (!principal.IsInRole("Admin"))
             {

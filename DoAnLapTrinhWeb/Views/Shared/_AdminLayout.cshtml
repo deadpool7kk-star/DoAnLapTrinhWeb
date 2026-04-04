@@ -6,9 +6,8 @@
   <title>@ViewData["Title"] — Vermeil Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
+<body class="admin-body">
 
 <!-- ══ SIDEBAR ══ -->
 <aside class="sidebar">
@@ -19,8 +18,8 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Tổng Quan</div>
-    <a asp-area="" asp-controller="AdminReservations" asp-action="Index" class="nav-item">
-      <span class="nav-icon">📅</span> Đơn Đặt Bàn
+    <a asp-area="" asp-controller="AdminReservations" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminReservations" ? "active" : "")">
+      <span class="nav-icon">📅</span> Đặt Bàn
     </a>
 
     <div class="nav-section-label">Thực Đơn</div>
@@ -40,8 +39,8 @@
     </a>
 
     <div class="nav-section-label">Hệ Thống</div>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">⚙️</span> Cài Đặt
+    <a asp-area="" asp-controller="Admin" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+      <span class="nav-icon">⚙️</span> Dashboard
     </a>
   </nav>
 
@@ -51,13 +50,13 @@
   @inject UserManager<ApplicationUser> UserManager
 
   <div class="sidebar-footer">
-    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ">
+    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ" style="text-decoration:none; color:inherit;">
       <div class="admin-info">
         <div class="admin-avatar">👑</div>
         <div class="admin-detail">
           @{
               var currentUser = await UserManager.GetUserAsync(User);
-              var displayName = currentUser?.FullName ?? "Admin";
+              var displayName = currentUser?.FullName ?? "HuuTriAdmin";
           }
           <strong>@displayName</strong>
           <span>Super Admin</span>
@@ -65,7 +64,7 @@
       </div>
     </a>
     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
-        <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ Đăng Xuất</button>
+        <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ ĐĂNG XUẤT</button>
     </form>
   </div>
 </aside>
@@ -74,8 +73,14 @@
 <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h1>@ViewData["Title"]</h1>
-      <p>Vermeil Fine Dining · Hệ thống quản trị cao cấp</p>
+      @if (ViewData["ShowBack"] != null && (bool)ViewData["ShowBack"])
+      {
+          <a href="@(ViewData["BackUrl"] ?? "javascript:history.back()")" class="btn-back"><span>←</span> Quay lại</a>
+      }
+      <div class="topbar-title-wrap">
+          <h1>@(ViewData["Title"] ?? "Admin Dashboard")</h1>
+          <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="topbar-search">

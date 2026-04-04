@@ -1,6 +1,7 @@
-@model IEnumerable<DoAnLapTrinhWeb.Models.Category>
+@model IEnumerable<DoAnLapTrinhWeb.Models.Dish>
 @{
     ViewData["Title"] = "Trang Chủ";
+    var categories = ViewBag.Categories as IEnumerable<DoAnLapTrinhWeb.Models.Category> ?? new List<DoAnLapTrinhWeb.Models.Category>();
 }
 <section id="hero">
   <div class="hero-bg"></div>
@@ -8,7 +9,7 @@
   <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
   <div class="hero-corner bl"></div><div class="hero-corner br"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow"><span>Fine Dining · Hà Nội · Est. 2012</span></div>
+    <div class="hero-eyebrow"><span>Fine Dining · Sài Gòn · Est. 2012</span></div>
     <h1 class="hero-title">
       Nghệ Thuật
       <em>Ẩm Thực</em>
@@ -18,6 +19,12 @@
     <div class="hero-btns">
       <button class="btn-gold" onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})">Khám Phá Thực Đơn</button>
       <button class="btn-ghost" onclick="document.getElementById('reservation').scrollIntoView({behavior: 'smooth'})">Đặt Bàn Ngay</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="visual-inner">
+      <img src="https://i.pinimg.com/736x/16/57/76/1657768b64383d87f0dccde854e6eecb.jpg" alt="Vermeil Fine Dining Excellence" />
+      <div class="visual-deco-frame"></div>
     </div>
   </div>
   <div class="hero-scroll">Cuộn Xuống</div>
@@ -38,48 +45,50 @@
     <h2 class="section-title">Tinh Hoa <em>Ẩm Thực</em></h2>
     <p>Mỗi món ăn là một tác phẩm được chắt lọc từ nguyên liệu tươi sạch nhất, chế biến bởi đội ngũ bếp trưởng đẳng cấp quốc tế.</p>
   </div>
-  <div class="menu-tabs">
+  <div class="menu-tabs" id="menuTabs">
     <button class="tab-btn active" data-filter="all">Tất Cả</button>
-    @foreach (var category in Model)
+    @foreach(var cat in categories)
     {
-        <button class="tab-btn" data-filter="cat-@category.Id">@category.Name</button>
+        <button class="tab-btn" data-filter="@cat.Name">@cat.Name</button>
     }
   </div>
-  <div class="menu-grid">
-    @foreach (var category in Model)
+  <div class="menu-grid" id="menuGrid">
+    @foreach(var item in Model)
     {
-        @foreach (var dish in category.Dishes.Where(d => d.IsVisible))
-        {
-            <div class="menu-card" data-category="cat-@category.Id">
-                <div class="menu-card-top">
-                    <div class="menu-icon">@(string.IsNullOrEmpty(dish.Icon) ? "🍽️" : dish.Icon)</div>
-                    @if (dish.DiscountPercentage > 0)
-                    {
-                        <span class="menu-badge red">SALE -@dish.DiscountPercentage%</span>
-                    }
-                    else if (!string.IsNullOrEmpty(dish.Badge))
-                    {
-                        <span class="menu-badge gold">@dish.Badge</span>
-                    }
-                </div>
-                <h4>@dish.Name</h4>
-                <p>@dish.Description</p>
-                <div class="menu-card-footer">
-                    <div class="price-wrap">
-                        @if (dish.DiscountPercentage > 0)
-                        {
-                            <span class="price-old">@dish.Price.ToString("N0")₫</span>
-                            <span class="price">@dish.DiscountedPrice.ToString("N0")₫</span>
-                        }
-                        else
-                        {
-                            <span class="price">@dish.Price.ToString("N0")₫</span>
-                        }
-                    </div>
-                    <button class="add-btn">+</button>
-                </div>
+        <div class="menu-card" data-category="@(item.Category?.Name)">
+          <div class="menu-card-top">
+            <div class="menu-icon">
+                @if(!string.IsNullOrEmpty(item.ImageUrl))
+                {
+                    <img src="@item.ImageUrl" alt="@item.Name" style="width:100%; height:100%; object-fit:cover; border-radius:10px; transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);" />
+                }
+                else
+                {
+                    @(item.Icon ?? "🍽️")
+                }
             </div>
-        }
+            @if(!string.IsNullOrEmpty(item.Badge))
+            {
+                <span class="menu-badge gold">@item.Badge</span>
+            }
+          </div>
+          <h4>@item.Name</h4>
+          <p>@item.Description</p>
+          <div class="menu-card-footer">
+            <div class="price-wrap">
+                @if(item.DiscountPercentage > 0)
+                {
+                    <span class="price-old">@item.Price.ToString("N0")₫</span>
+                    <span class="price">@item.DiscountedPrice.ToString("N0")₫</span>
+                }
+                else
+                {
+                    <span class="price">@item.Price.ToString("N0")₫</span>
+                }
+            </div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
     }
   </div>
 </section>
@@ -89,7 +98,9 @@
   <div class="about-grid">
     <div class="about-visual">
       <div class="about-frame-outer"></div>
-      <div class="about-frame-inner">🍷</div>
+      <div class="about-frame-inner">
+        <img src="https://i.pinimg.com/736x/e1/2c/b5/e12cb5bf6722cc47bfcf54562f777160.jpg" alt="Vermeil Atmosphere" />
+      </div>
       <div class="about-corner-deco"></div>
       <div class="about-corner-deco br"></div>
       <div class="about-badge-float">
@@ -204,36 +215,100 @@
   </div>
 </section>
 
-@section Scripts {
-    <script>
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const filter = button.getAttribute('data-filter');
-                
-                // Update active tab button
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                // Filter menu cards
-                document.querySelectorAll('.menu-card').forEach(card => {
-                    if (card.getAttribute('data-category') === filter || filter === 'all') {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script>
-}
-
 <style>
-    .price-wrap { display: flex; flex-direction: column; }
-    .price-old { 
-        font-size: 0.8rem; 
-        text-decoration: line-through; 
-        color: rgba(255,255,255,0.4); 
-        margin-bottom: -4px;
-    }
-    .price { color: var(--gold-light) !important; font-weight: 700; font-family: 'Playfair Display', serif; }
+  /* Cập nhật Kích thước Ảnh Menu (Hình vuông vừa phải) */
+  .menu-card-top {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto 12px; /* Giảm khoảng cách dưới ảnh */
+    display: flex;
+    justify-content: center;
+  }
+  #menuGrid .menu-icon {
+    width: 130px !important; /* Trả lại kích thước vừa phải */
+    height: 130px !important;
+    border-radius: 10px;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  #menuGrid .menu-badge {
+    position: absolute;
+    top: -10px; /* Đưa nhãn cao hẳn ra ngoài góc ảnh */
+    right: -60px; /* Đưa nhãn ngang hẳn ra ngoài góc ảnh */
+    z-index: 10;
+    margin: 0;
+    transform: scale(0.85);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4); /* Thêm bóng đổ để tách biệt với ảnh */
+    pointer-events: none;
+  }
+  #menuGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; /* Thu hẹp khoảng cách giữa các thẻ món ăn */
+    justify-items: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+  #menuGrid .menu-card {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Đảm bảo thẻ tự động mở rộng theo grid-cell */
+    min-width: 280px; 
+    max-width: 320px;
+  }
+  #menuGrid .menu-card:hover {
+    background: rgba(255,255,255,0.03);
+    transform: translateY(-8px);
+    border-color: rgba(201,168,76,0.6);
+  }
+  #menuGrid .menu-card h4 { margin: 10px 0 5px; font-size: 1.15rem; color: var(--gold); }
+  #menuGrid .menu-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; flex: 1; margin-bottom: 15px; }
+  .menu-card-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+  
+  .price-wrap { display: flex; flex-direction: column; }
+  .price-old { text-decoration: line-through; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 2px; }
+  .price { color: var(--gold); font-weight: 600; font-size: 1.1rem; }
+
+  /* Lọc món ăn hiệu ứng mượt mà */
+  .menu-card.hidden {
+    display: none;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('#menuTabs .tab-btn');
+    const grid = document.getElementById('menuGrid');
+    
+    if (tabs && grid) {
+      const cards = grid.querySelectorAll('.menu-card');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const filter = tab.getAttribute('data-filter');
+
+          cards.forEach(card => {
+            if (filter === 'all' || card.getAttribute('data-category') === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+    }
+  });
+</script>
