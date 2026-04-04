@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vermeil — Quản Lý Thực Đơn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:      #0a0706;
+      --black-2:    #120e0c;
+      --black-3:    #1c1512;
+      --black-4:    #2a1f1a;
+      --black-5:    #332420;
+      --red-deep:   #7a1515;
+      --red-mid:    #9e2020;
+      --gold:       #c9a84c;
+      --gold-light: #e2c47a;
+      --cream:      #f5ede0;
+      --text-muted: rgba(245,237,224,0.42);
+      --text-soft:  rgba(245,237,224,0.68);
+      --text-main:  rgba(245,237,224,0.92);
+      --sidebar-w:  260px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Jost',sans-serif; background:var(--black-2); color:var(--text-main); display:flex; min-height:100vh; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--black); }
+    ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
+
+    /* ══════════════════════════════
+       SIDEBAR
+    ══════════════════════════════ */
+    .sidebar {
+      width:var(--sidebar-w); flex-shrink:0;
+      background:var(--black);
+      border-right:1px solid rgba(201,168,76,.14);
+      display:flex; flex-direction:column;
+      position:fixed; top:0; left:0; height:100vh; z-index:50;
+    }
+
+    .sidebar-logo {
+      padding:32px 28px 28px;
+      border-bottom:1px solid rgba(201,168,76,.1);
+    }
+    .sidebar-logo a {
+      font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700;
+      color:var(--gold); letter-spacing:.08em; text-decoration:none; display:block;
+    }
+    .sidebar-logo a sup { font-size:.45rem; color:var(--gold-light); font-style:italic; }
+    .sidebar-logo p { font-size:.67rem; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-top:4px; }
+
+    .sidebar-nav { flex:1; padding:24px 0; overflow-y:auto; }
+    .nav-section-label {
+      font-size:.62rem; letter-spacing:.2em; text-transform:uppercase;
+      color:rgba(201,168,76,.35); padding:0 28px; margin-bottom:8px; margin-top:20px;
+    }
+    .nav-section-label:first-child { margin-top:0; }
+
+    .nav-item {
+      display:flex; align-items:center; gap:12px;
+      padding:11px 28px; cursor:pointer;
+      font-size:.82rem; font-weight:500; letter-spacing:.06em;
+      color:var(--text-muted); text-decoration:none;
+      transition:all .25s; position:relative;
+    }
+    .nav-item:hover { color:var(--text-soft); background:rgba(201,168,76,.05); }
+    .nav-item.active {
+      color:var(--gold); background:rgba(201,168,76,.08);
+    }
+    .nav-item.active::before {
+      content:''; position:absolute; left:0; top:0; bottom:0;
+      width:2px; background:var(--gold);
+    }
+    .nav-item .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .nav-badge {
+      margin-left:auto; background:var(--red-mid); color:#fff;
+      font-size:.6rem; font-weight:600; padding:2px 7px; border-radius:20px; letter-spacing:.04em;
+    }
+
+    .sidebar-footer {
+      padding:20px 28px;
+      border-top:1px solid rgba(201,168,76,.1);
+    }
+    .admin-info { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .admin-avatar {
+      width:36px; height:36px; border-radius:50%;
+      background:linear-gradient(135deg,var(--red-deep),var(--black-5));
+      border:1px solid rgba(201,168,76,.3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.9rem; flex-shrink:0;
+    }
+    .admin-detail strong { display:block; font-size:.82rem; color:var(--cream); font-weight:500; }
+    .admin-detail span { font-size:.7rem; color:var(--text-muted); }
+    .btn-logout {
+      width:100%; background:transparent; border:1px solid rgba(201,168,76,.2);
+      color:var(--text-muted); padding:9px; font-family:'Jost',sans-serif;
+      font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+    }
+    .btn-logout:hover { border-color:rgba(192,57,43,.5); color:#e08080; }
+
+    /* ══════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════ */
+    .main {
+      margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-height:100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background:var(--black);
+      border-bottom:1px solid rgba(201,168,76,.12);
+      padding:18px 40px;
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:40;
+    }
+    .topbar-left h1 {
+      font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:500; color:var(--cream);
+    }
+    .topbar-left p { font-size:.75rem; color:var(--text-muted); margin-top:2px; }
+    .topbar-right { display:flex; align-items:center; gap:14px; }
+    .topbar-search {
+      display:flex; align-items:center; gap:8px;
+      background:var(--black-4); border:1px solid rgba(201,168,76,.14);
+      padding:8px 16px; width:220px;
+    }
+    .topbar-search input {
+      background:transparent; border:none; outline:none;
+      font-family:'Jost',sans-serif; font-size:.82rem; color:var(--cream); width:100%;
+    }
+    .topbar-search input::placeholder { color:var(--text-muted); }
+    .topbar-search span { color:var(--text-muted); font-size:.85rem; }
+    .topbar-icon {
+      width:38px; height:38px; border:1px solid rgba(201,168,76,.18);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; cursor:pointer; transition:all .25s; color:var(--text-muted);
+      position:relative;
+    }
+    .topbar-icon:hover { border-color:var(--gold); color:var(--gold); }
+    .notif-dot {
+      position:absolute; top:6px; right:6px;
+      width:7px; height:7px; border-radius:50%;
+      background:var(--red-mid); border:1.5px solid var(--black);
+    }
+
+    /* ── PAGE BODY ── */
+    .page-body { padding:36px 40px; flex:1; }
+
+    /* ── STATS ROW ── */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:36px; }
+    .stat-card {
+      background:var(--black-3); border:1px solid rgba(201,168,76,.12);
+      padding:24px 26px; transition:border-color .3s;
+    }
+    .stat-card:hover { border-color:rgba(201,168,76,.3); }
+    .stat-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+    .stat-card-icon {
+      width:42px; height:42px; border:1px solid rgba(201,168,76,.2);
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+    }
+    .stat-trend { font-size:.7rem; color:#7ecda0; letter-spacing:.04em; }
+    .stat-trend.down { color:#e08080; }
+    .stat-card-num { font-family:'Playfair Display',serif; font-size:1.9rem; color:var(--gold); font-weight:500; margin-bottom:4px; }
+    .stat-card-label { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;
+    }
+    .section-header-left h2 {
+      font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:500; color:var(--cream);
+    }
+    .section-header-left p { font-size:.75rem; color:var(--text-muted); margin-top:3px; }
+    .section-header-right { display:flex; gap:10px; }
+
+    /* ── BUTTONS ── */
+    .btn-add {
+      display:flex; align-items:center; gap:8px;
+      background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+      background-size:200% 100%; color:var(--black); border:none;
+      padding:10px 22px; font-family:'Jost',sans-serif; font-size:.76rem;
+      font-weight:500; letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
+      transition:background-position .5s, box-shadow .3s, transform .2s;
+      box-shadow:0 4px 16px rgba(201,168,76,.2);
+    }
+    .btn-add:hover { background-position:100% 0; box-shadow:0 8px 24px rgba(201,168,76,.35); transform:translateY(-1px); }
+
+    .btn-filter {
+      display:flex; align-items:center; gap:7px;
+      background:transparent; color:var(--text-soft);
+      border:1px solid rgba(201,168,76,.2); padding:9px 18px;
+      font-family:'Jost',sans-serif; font-size:.76rem; font-weight:500;
+      letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .25s;
+    }
+    .btn-filter:hover { border-color:var(--gold); color:var(--gold); }
+
+    /* ── TABS ── */
+    .tab-row {
+      display:flex; gap:0; margin-bottom:24px;
+      border-bottom:1px solid rgba(201,168,76,.12);
+    }
+    .tab {
+      padding:10px 24px; background:transparent; border:none;
+      font-family:'Jost',sans-serif; font-size:.76rem; font-weight:500;
+      letter-spacing:.1em; text-transform:uppercase; cursor:pointer;
+      color:var(--text-muted); border-bottom:2px solid transparent;
+      margin-bottom:-1px; transition:all .25s;
+    }
+    .tab:hover { color:var(--text-soft); }
+    .tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background:var(--black-3); border:1px solid rgba(201,168,76,.12); overflow:hidden;
+    }
+    table { width:100%; border-collapse:collapse; }
+    thead tr {
+      border-bottom:1px solid rgba(201,168,76,.14);
+      background:var(--black-4);
+    }
+    thead th {
+      padding:14px 20px; text-align:left;
+      font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+      color:var(--text-muted); font-weight:500;
+    }
+    thead th:first-child { padding-left:24px; }
+    thead th:last-child { text-align:center; }
+
+    tbody tr {
+      border-bottom:1px solid rgba(201,168,76,.07);
+      transition:background .2s;
+    }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:rgba(201,168,76,.04); }
+
+    tbody td { padding:16px 20px; font-size:.84rem; color:var(--text-soft); vertical-align:middle; }
+    tbody td:first-child { padding-left:24px; }
+    tbody td:last-child { text-align:center; }
+
+    .td-dish { display:flex; align-items:center; gap:14px; }
+    .td-icon {
+      width:44px; height:44px; background:var(--black-5);
+      border:1px solid rgba(201,168,76,.15);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; flex-shrink:0;
+    }
+    .td-dish-name { font-size:.88rem; color:var(--cream); font-weight:500; }
+    .td-dish-cat { font-size:.73rem; color:var(--text-muted); margin-top:2px; }
+
+    .price-cell { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); }
+
+    .status-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+      padding:4px 12px; border:1px solid; font-weight:500;
+    }
+    .status-badge.active { color:#7ecda0; border-color:rgba(126,205,160,.3); }
+    .status-badge.active::before { content:''; width:5px; height:5px; border-radius:50%; background:#7ecda0; }
+    .status-badge.hidden { color:var(--text-muted); border-color:rgba(245,237,224,.12); }
+    .status-badge.hidden::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--text-muted); }
+
+    /* ── ACTION BUTTONS ── */
+    .action-group { display:flex; gap:6px; justify-content:center; }
+    .btn-edit {
+      display:flex; align-items:center; gap:5px;
+      background:transparent; border:1px solid rgba(201,168,76,.28);
+      color:var(--gold); padding:7px 14px;
+      font-family:'Jost',sans-serif; font-size:.7rem; font-weight:500;
+      letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .25s;
+    }
+    .btn-edit:hover { background:rgba(201,168,76,.1); }
+    .btn-delete {
+      display:flex; align-items:center; gap:5px;
+      background:transparent; border:1px solid rgba(192,57,43,.3);
+      color:#e08080; padding:7px 14px;
+      font-family:'Jost',sans-serif; font-size:.7rem; font-weight:500;
+      letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .25s;
+    }
+    .btn-delete:hover { background:rgba(192,57,43,.1); }
+    .btn-view {
+      display:flex; align-items:center;
+      background:transparent; border:1px solid rgba(245,237,224,.1);
+      color:var(--text-muted); padding:7px 10px;
+      font-size:.78rem; cursor:pointer; transition:all .25s;
+    }
+    .btn-view:hover { border-color:rgba(245,237,224,.28); color:var(--text-soft); }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 24px; border-top:1px solid rgba(201,168,76,.1);
+      background:var(--black-4);
+    }
+    .pagination p { font-size:.76rem; color:var(--text-muted); }
+    .page-btns { display:flex; gap:4px; }
+    .page-btn {
+      width:32px; height:32px; border:1px solid rgba(201,168,76,.16);
+      background:transparent; color:var(--text-muted);
+      font-family:'Jost',sans-serif; font-size:.78rem; cursor:pointer; transition:all .25s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .page-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .page-btn.active { background:var(--gold); color:var(--black); border-color:var(--gold); }
+
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(10,7,6,.85);
+      backdrop-filter:blur(6px); z-index:200;
+      display:flex; align-items:center; justify-content:center;
+      animation:fadeIn .3s ease both;
+    }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .modal {
+      background:var(--black-3); border:1px solid rgba(201,168,76,.22);
+      width:100%; max-width:520px; padding:44px 48px;
+      position:relative;
+      animation:modalIn .4s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes modalIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .modal::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .modal-close {
+      position:absolute; top:16px; right:18px;
+      background:transparent; border:none; color:var(--text-muted);
+      font-size:1.2rem; cursor:pointer; transition:color .2s;
+    }
+    .modal-close:hover { color:var(--cream); }
+    .modal h3 {
+      font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--cream);
+      margin-bottom:6px;
+    }
+    .modal > p { font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:30px; }
+
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group-m { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+    .form-group-m label { font-size:.68rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted); }
+    .form-group-m input,
+    .form-group-m select,
+    .form-group-m textarea {
+      background:var(--black-4); border:1px solid rgba(201,168,76,.16);
+      padding:11px 14px; font-family:'Jost',sans-serif; font-size:.86rem;
+      color:var(--cream); outline:none; transition:border-color .25s;
+    }
+    .form-group-m input::placeholder,
+    .form-group-m textarea::placeholder { color:rgba(245,237,224,.18); }
+    .form-group-m input:focus,
+    .form-group-m select:focus,
+    .form-group-m textarea:focus { border-color:var(--gold); }
+    .form-group-m select option { background:var(--black-4); }
+    .form-group-m textarea { resize:vertical; min-height:76px; }
+
+    .modal-actions { display:flex; gap:10px; margin-top:24px; }
+    .btn-modal-save {
+      flex:1; background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+      background-size:200% 100%; color:var(--black); border:none; padding:13px;
+      font-family:'Jost',sans-serif; font-size:.76rem; font-weight:500;
+      letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+      transition:background-position .5s, box-shadow .3s;
+      box-shadow:0 4px 18px rgba(201,168,76,.18);
+    }
+    .btn-modal-save:hover { background-position:100% 0; box-shadow:0 8px 28px rgba(201,168,76,.32); }
+    .btn-modal-cancel {
+      flex:1; background:transparent; border:1px solid rgba(245,237,224,.15);
+      color:var(--text-muted); padding:13px; font-family:'Jost',sans-serif;
+      font-size:.76rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+      transition:all .25s;
+    }
+    .btn-modal-cancel:hover { border-color:rgba(245,237,224,.3); color:var(--text-soft); }
+
+    /* ── DELETE CONFIRM MODAL ── */
+    .modal-delete { max-width:400px; text-align:center; }
+    .modal-delete .del-icon { font-size:2.5rem; margin-bottom:16px; }
+    .modal-delete h3 { margin-bottom:10px; }
+    .modal-delete > p { text-align:center; margin-bottom:28px; }
+    .btn-confirm-del {
+      flex:1; background:rgba(192,57,43,.15); border:1px solid rgba(192,57,43,.4);
+      color:#e08080; padding:13px; font-family:'Jost',sans-serif;
+      font-size:.76rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+      transition:all .25s;
+    }
+    .btn-confirm-del:hover { background:rgba(192,57,43,.25); }
+
+    /* hidden by default */
+    .modal-overlay { display:none; }
+    .modal-overlay.show { display:flex; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="#">VERMEIL<sup>®</sup></a>
+    <p>Admin Dashboard</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Tổng Quan</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📅</span> Đặt Bàn
+      <span class="nav-badge">12</span>
+    </a>
+
+    <div class="nav-section-label">Thực Đơn</div>
+    <a href="#" class="nav-item active">
+      <span class="nav-icon">🍽️</span> Quản Lý Món Ăn
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🗂️</span> Danh Mục
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🏷️</span> Giá & Khuyến Mãi
+    </a>
+
+    <div class="nav-section-label">Vận Hành</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🪑</span> Sơ Đồ Bàn
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📦</span> Đơn Hàng
+      <span class="nav-badge">5</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📈</span> Doanh Thu
+    </a>
+
+    <div class="nav-section-label">Hệ Thống</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">👥</span> Nhân Viên
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">⚙️</span> Cài Đặt
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-info">
+      <div class="admin-avatar">👑</div>
+      <div class="admin-detail">
+        <strong>Nguyễn Minh Tú</strong>
+        <span>Super Admin</span>
+      </div>
+    </div>
+    <button class="btn-logout">⬡ Đăng Xuất</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Quản Lý Thực Đơn</h1>
+      <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Tìm kiếm món ăn..."/>
+      </div>
+      <div class="topbar-icon">
+        🔔
+        <span class="notif-dot"></span>
+      </div>
+      <div class="topbar-icon">👤</div>
+    </div>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">🍽️</div>
+          <span class="stat-trend">↑ 3 mới</span>
+        </div>
+        <div class="stat-card-num">42</div>
+        <div class="stat-card-label">Tổng Món Ăn</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">✅</div>
+          <span class="stat-trend">↑ 2%</span>
+        </div>
+        <div class="stat-card-num">38</div>
+        <div class="stat-card-label">Đang Hiển Thị</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">🗂️</div>
+          <span class="stat-trend">—</span>
+        </div>
+        <div class="stat-card-num">5</div>
+        <div class="stat-card-label">Danh Mục</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">⭐</div>
+          <span class="stat-trend down">↓ 1</span>
+        </div>
+        <div class="stat-card-num">4</div>
+        <div class="stat-card-label">Ẩn / Hết Món</div>
+      </div>
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="section-header">
+      <div class="section-header-left">
+        <h2>Danh Sách Món Ăn</h2>
+        <p>Quản lý toàn bộ thực đơn nhà hàng</p>
+      </div>
+      <div class="section-header-right">
+        <button class="btn-filter" onclick="document.getElementById('modalAdd').classList.add('show')">
+          ⚙ Lọc
+        </button>
+        <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('show')">
+          ＋ Thêm Món Mới
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab active">Tất Cả (42)</button>
+      <button class="tab">Khai Vị (8)</button>
+      <button class="tab">Món Chính (18)</button>
+      <button class="tab">Tráng Miệng (10)</button>
+      <button class="tab">Đồ Uống (6)</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên Món</th>
+            <th>Danh Mục</th>
+            <th>Giá</th>
+            <th>Trạng Thái</th>
+            <th>Cập Nhật</th>
+            <th>Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">01</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🥩</div>
+                <div>
+                  <div class="td-dish-name">Bò Wagyu A5 Áp Chảo</div>
+                  <div class="td-dish-cat">Món Chính · Signature</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">480.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">12/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">02</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🐟</div>
+                <div>
+                  <div class="td-dish-name">Cá Hồi Sốt Chanh Bơ</div>
+                  <div class="td-dish-cat">Món Chính · Mới</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">295.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">15/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">03</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🍝</div>
+                <div>
+                  <div class="td-dish-name">Pasta Nấm Truffle Đen</div>
+                  <div class="td-dish-cat">Món Chính · Chef's Pick</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">225.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">10/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">04</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🥗</div>
+                <div>
+                  <div class="td-dish-name">Salad Rau Mầm Hữu Cơ</div>
+                  <div class="td-dish-cat">Khai Vị · Healthy</div>
+                </div>
+              </div>
+            </td>
+            <td>Khai Vị</td>
+            <td><span class="price-cell">85.000₫</span></td>
+            <td><span class="status-badge hidden">Đã ẩn</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">08/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">05</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🍮</div>
+                <div>
+                  <div class="td-dish-name">Panna Cotta Vanilla Bourbon</div>
+                  <div class="td-dish-cat">Tráng Miệng · Mới</div>
+                </div>
+              </div>
+            </td>
+            <td>Tráng Miệng</td>
+            <td><span class="price-cell">95.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">18/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- PAGINATION -->
+      <div class="pagination">
+        <p>Hiển thị 1–5 / 42 món</p>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">…</button>
+          <button class="page-btn">9</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</main>
+
+<!-- ══ MODAL: THÊM MÓN ══ -->
+<div class="modal-overlay" id="modalAdd">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modalAdd').classList.remove('show')">✕</button>
+    <h3>Thêm Món Mới</h3>
+    <p>Điền đầy đủ thông tin · Lưu để cập nhật thực đơn</p>
+
+    <div class="form-group-m">
+      <label>Tên Món</label>
+      <input type="text" placeholder="Nhập tên món ăn..."/>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Danh Mục</label>
+        <select>
+          <option>— Chọn danh mục —</option>
+          <option>Khai Vị</option>
+          <option>Món Chính</option>
+          <option>Tráng Miệng</option>
+          <option>Đồ Uống</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Giá (₫)</label>
+        <input type="text" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group-m">
+      <label>Mô Tả</label>
+      <textarea placeholder="Mô tả nguyên liệu và cách chế biến..."></textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Badge / Nhãn</label>
+        <select>
+          <option>— Không có —</option>
+          <option>Mới</option>
+          <option>Signature</option>
+          <option>Phổ Biến</option>
+          <option>Chef's Pick</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Trạng Thái</label>
+        <select>
+          <option>Hiển thị</option>
+          <option>Ẩn</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalAdd').classList.remove('show')">Huỷ</button>
+      <button class="btn-modal-save">＋ Lưu Món Mới</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SỬA MÓN ══ -->
+<div class="modal-overlay" id="modalEdit">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modalEdit').classList.remove('show')">✕</button>
+    <h3>Chỉnh Sửa Món Ăn</h3>
+    <p>Cập nhật thông tin · Lưu để áp dụng thay đổi</p>
+
+    <div class="form-group-m">
+      <label>Tên Món</label>
+      <input type="text" value="Bò Wagyu A5 Áp Chảo"/>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Danh Mục</label>
+        <select>
+          <option>Khai Vị</option>
+          <option selected>Món Chính</option>
+          <option>Tráng Miệng</option>
+          <option>Đồ Uống</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Giá (₫)</label>
+        <input type="text" value="480000"/>
+      </div>
+    </div>
+    <div class="form-group-m">
+      <label>Mô Tả</label>
+      <textarea>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Badge / Nhãn</label>
+        <select>
+          <option selected>Signature</option>
+          <option>Mới</option>
+          <option>Phổ Biến</option>
+          <option>Chef's Pick</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Trạng Thái</label>
+        <select>
+          <option selected>Hiển thị</option>
+          <option>Ẩn</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalEdit').classList.remove('show')">Huỷ</button>
+      <button class="btn-modal-save">✓ Lưu Thay Đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: XOÁ ══ -->
+<div class="modal-overlay" id="modalDelete">
+  <div class="modal modal-delete">
+    <button class="modal-close" onclick="document.getElementById('modalDelete').classList.remove('show')">✕</button>
+    <div class="del-icon">🗑️</div>
+    <h3>Xác Nhận Xoá Món</h3>
+    <p>Bạn có chắc muốn xoá <strong style="color:var(--gold)">"Bò Wagyu A5 Áp Chảo"</strong> khỏi thực đơn? Hành động này không thể hoàn tác.</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalDelete').classList.remove('show')">Huỷ Bỏ</button>
+      <button class="btn-confirm-del">✕ Xác Nhận Xoá</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Close modal when clicking overlay background
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+@model IEnumerable<DoAnLapTrinhWeb.Models.Reservation>
+@{
+    ViewData["Title"] = "Quản Lý Đặt Bàn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-body">
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">📅</div>
+                <span class="stat-trend">—</span>
+            </div>
+            <div class="stat-card-num">@Model.Count()</div>
+            <div class="stat-card-label">Tổng Lượt Đặt</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">⏳</div>
+                <span class="stat-trend">@Model.Count(r => r.Status == "Pending") mới</span>
+            </div>
+            <div class="stat-card-num">@Model.Count(r => r.Status == "Pending")</div>
+            <div class="stat-card-label">Chờ Xác Nhận</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">✅</div>
+                <span class="stat-trend">—</span>
+            </div>
+            <div class="stat-card-num">@Model.Count(r => r.Status == "Confirmed")</div>
+            <div class="stat-card-label">Đã Xác Nhận</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-card-icon">✕</div>
+                <span class="stat-trend">—</span>
+            </div>
+            <div class="stat-card-num">@Model.Count(r => r.Status == "Cancelled")</div>
+            <div class="stat-card-label">Đã Hủy</div>
+        </div>
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="section-header">
+        <div class="section-header-left">
+            <h2>Danh Sách Đặt Bàn</h2>
+            <p>Xác nhận và quản lý các yêu cầu đặt chỗ từ khách hàng</p>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Khách Hàng</th>
+                    <th>Liên Hệ</th>
+                    <th>Thời Gian</th>
+                    <th>Số Khách</th>
+                    <th>Trạng Thái</th>
+                    <th>Ghi Chú</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="td-dish">
+                                <div class="td-icon">👤</div>
+                                <div>
+                                    <div class="td-dish-name">@item.FullName</div>
+                                    <div class="td-dish-cat">Đặt lúc: @item.CreatedAt.ToString("HH:mm dd/MM")</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.85rem; color: var(--gold);">@item.Phone</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.85rem;">@item.BookingDate.ToString("dd/MM/yyyy")</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">@item.BookingTime</div>
+                        </td>
+                        <td>
+                            <span style="font-weight: 500; color: var(--cream);">@item.GuestCount</span>
+                        </td>
+                        <td>
+                            @if (item.Status == "Pending")
+                            {
+                                <span class="status-badge" style="color: #e2c47a; border-color: rgba(226,196,122,0.3);">Đang Chờ</span>
+                            }
+                            else if (item.Status == "Confirmed")
+                            {
+                                <span class="status-badge active">Đã Xác Nhận</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge hidden">Đã Hủy</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="font-size: 0.75rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@item.Note">
+                                @(string.IsNullOrEmpty(item.Note) ? "—" : item.Note)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                @if (item.Status == "Pending")
+                                {
+                                    <form asp-action="Confirm" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-edit" style="border-color: #7ecda0; color: #7ecda0;">✓ Duyệt</button>
+                                    </form>
+                                    <form asp-action="Cancel" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-delete">✕ Hủy</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-delete" onclick="return confirm('Xóa vĩnh viễn yêu cầu này?')">🗑 Xóa</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            Chưa có yêu cầu đặt bàn nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

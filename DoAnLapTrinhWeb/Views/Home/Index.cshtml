@@ -1,0 +1,214 @@
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div><div class="hero-corner br"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span>Fine Dining · Sài Gòn · Est. 2012</span></div>
+    <h1 class="hero-title">
+      Nghệ Thuật
+      <em>Ẩm Thực</em>
+      <span class="outline">Đỉnh Cao</span>
+    </h1>
+    <p class="hero-sub">Trải nghiệm ẩm thực hoàng gia với nguyên liệu thượng hạng, không gian sang trọng và dịch vụ đẳng cấp quốc tế — nơi mỗi bữa ăn trở thành ký ức không thể quên.</p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})">Khám Phá Thực Đơn</button>
+      <button class="btn-ghost" onclick="document.getElementById('reservation').scrollIntoView({behavior: 'smooth'})">Đặt Bàn Ngay</button>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="visual-inner">
+      <img src="https://i.pinimg.com/736x/16/57/76/1657768b64383d87f0dccde854e6eecb.jpg" alt="Vermeil Fine Dining Excellence" />
+      <div class="visual-deco-frame"></div>
+    </div>
+  </div>
+  <div class="hero-scroll">Cuộn Xuống</div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Năm Kinh Nghiệm</div></div>
+  <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Đánh Giá Trung Bình</div></div>
+  <div class="stat-item"><div class="stat-num">50k+</div><div class="stat-label">Lượt Khách</div></div>
+  <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Giải Thưởng Quốc Tế</div></div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header">
+    <div class="section-eyebrow"><span>Thực Đơn</span></div>
+    <h2 class="section-title">Tinh Hoa <em>Ẩm Thực</em></h2>
+    <p>Mỗi món ăn là một tác phẩm được chắt lọc từ nguyên liệu tươi sạch nhất, chế biến bởi đội ngũ bếp trưởng đẳng cấp quốc tế.</p>
+  </div>
+  <div class="menu-tabs">
+    <button class="tab-btn active">Tất Cả</button>
+    <button class="tab-btn">Khai Vị</button>
+    <button class="tab-btn">Món Chính</button>
+    <button class="tab-btn">Tráng Miệng</button>
+    <button class="tab-btn">Đồ Uống</button>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🥗</div><span class="menu-badge dim">Khai Vị</span></div>
+      <h4>Salad Rau Mầm Hữu Cơ</h4>
+      <p>Hỗn hợp rau mầm tươi với sốt dầu mè, phủ hạt thông rang và phô mai parmesan bào mỏng tinh tế.</p>
+      <div class="menu-card-footer"><span class="price">85.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍤</div><span class="menu-badge red">Phổ Biến</span></div>
+      <h4>Tôm Sú Nướng Thảo Mộc</h4>
+      <p>Tôm sú tươi nướng than hoa với bơ tỏi thảo mộc Địa Trung Hải, dùng kèm bánh mì baguette giòn.</p>
+      <div class="menu-card-footer"><span class="price">145.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🐟</div><span class="menu-badge gold">Mới</span></div>
+      <h4>Cá Hồi Sốt Chanh Bơ</h4>
+      <p>Fillet cá hồi Na Uy áp chảo vàng, phục vụ với măng tây Pháp và khoai tây nghiền kem tươi thượng hạng.</p>
+      <div class="menu-card-footer"><span class="price">295.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🥩</div><span class="menu-badge gold">Signature</span></div>
+      <h4>Bò Wagyu A5 Áp Chảo</h4>
+      <p>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</p>
+      <div class="menu-card-footer"><span class="price">480.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍝</div><span class="menu-badge dim">Chef's Pick</span></div>
+      <h4>Pasta Nấm Truffle Đen</h4>
+      <p>Linguine tươi xào với nấm rừng hỗn hợp, dầu truffle đen Périgord và kem tươi Pháp thượng hạng.</p>
+      <div class="menu-card-footer"><span class="price">225.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍮</div><span class="menu-badge gold">Mới</span></div>
+      <h4>Panna Cotta Vanilla Bourbon</h4>
+      <p>Panna cotta kem tươi hương vanilla Madagascar, coulis dâu tây tươi và lá bạc hà kết hợp hài hoà.</p>
+      <div class="menu-card-footer"><span class="price">95.000₫</span><button class="add-btn">+</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-frame-outer"></div>
+      <div class="about-frame-inner">
+        <img src="https://i.pinimg.com/736x/e1/2c/b5/e12cb5bf6722cc47bfcf54562f777160.jpg" alt="Vermeil Atmosphere" />
+      </div>
+      <div class="about-corner-deco"></div>
+      <div class="about-corner-deco br"></div>
+      <div class="about-badge-float">
+        <div class="num">12+</div>
+        <div class="lbl">Năm Thành Lập</div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-eyebrow"><span>Về Chúng Tôi</span></div>
+      <h2 class="section-title">Nơi Sang Trọng <em>Gặp Gỡ</em> Đam Mê</h2>
+      <div class="about-divider"></div>
+      <p>Vermeil được thành lập năm 2012 với triết lý đơn giản nhưng đầy tham vọng — tạo ra không gian ẩm thực đỉnh cao nơi mỗi bữa ăn là một hành trình trải nghiệm đa giác quan.</p>
+      <p>Đội ngũ bếp trưởng được đào tạo tại Paris, Tokyo và New York, mang về tinh hoa ẩm thực thế giới và kết hợp khéo léo với nguyên liệu bản địa Việt Nam thuần khiết nhất.</p>
+      <div class="about-awards">
+        <div class="award"><div class="award-icon">🏆</div><div class="award-text"><strong>Michelin Guide 2023</strong><span>Nhà hàng được khuyên dùng</span></div></div>
+        <div class="award"><div class="award-icon">🥇</div><div class="award-text"><strong>Asia's Best 2024</strong><span>Top 50 Restaurants</span></div></div>
+        <div class="award"><div class="award-icon">⭐</div><div class="award-text"><strong>Foody Awards</strong><span>Top 10 Fine Dining HN</span></div></div>
+        <div class="award"><div class="award-icon">🍷</div><div class="award-text"><strong>Wine Spectator</strong><span>Award of Excellence</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="ornament"><span>Đặt Bàn Trực Tuyến</span></div>
+  <div class="res-wrap">
+    <div class="res-info">
+      <div class="section-eyebrow"><span>Liên Hệ & Đặt Chỗ</span></div>
+      <h2 class="section-title">Dành Riêng <em>Bàn Của Bạn</em></h2>
+      <p>Hãy để chúng tôi chuẩn bị một buổi tối hoàn hảo — đặt bàn trước để đảm bảo trải nghiệm tốt nhất và nhận những ưu đãi dành riêng cho thực khách.</p>
+      <div class="contact-list">
+        <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-text"><strong>Địa chỉ</strong><span>87A đường Merlin, Tân Phú, Thủ Đức</span></div></div>
+        <div class="contact-row"><div class="contact-icon">🕐</div><div class="contact-text"><strong>Giờ mở cửa</strong><span>Thứ 2 – Chủ Nhật: 8:30 — 23:00</span></div></div>
+        <div class="contact-row"><div class="contact-icon">📞</div><div class="contact-text"><strong>Điện thoại</strong><span>(024) 3826 5500 · 0912 345 678</span></div></div>
+        <div class="contact-row"><div class="contact-icon">✉️</div><div class="contact-text"><strong>Email</strong><span>hello@vermeil.vn</span></div></div>
+      </div>
+    </div>
+    <div class="res-form-wrap">
+      <h3>Đặt Bàn Ngay</h3>
+      <p>Điền thông tin · Nhận xác nhận ngay</p>
+      
+      @if (TempData["Message"] != null)
+      {
+          <div style="background: rgba(126,205,160,0.1); border: 1px solid #7ecda0; color: #7ecda0; padding: 10px; margin-bottom: 20px; font-size: 0.9rem;">
+              @TempData["Message"]
+          </div>
+      }
+      @if (TempData["Error"] != null)
+      {
+          <div style="background: rgba(224,128,128,0.1); border: 1px solid #e08080; color: #e08080; padding: 10px; margin-bottom: 20px; font-size: 0.9rem;">
+              @TempData["Error"]
+          </div>
+      }
+
+      <form asp-controller="Home" asp-action="BookTable" method="post">
+          <div class="form-row">
+            <div class="form-group"><label>Họ & Tên</label><input type="text" name="FullName" required placeholder="Nguyễn Văn A"/></div>
+            <div class="form-group"><label>Số Điện Thoại</label><input type="tel" name="Phone" required placeholder="0912 345 678"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Ngày</label><input type="date" name="BookingDate" required/></div>
+            <div class="form-group"><label>Giờ</label>
+              <select name="BookingTime" required>
+                <option value="">— Chọn giờ —</option>
+                <option value="08:30">8:30 AM</option>
+                <option value="09:00">9:00 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="16:30">4:30 PM</option>
+                <option value="17:00">5:00 PM</option>
+                <option value="17:30">5:30 PM</option>
+                <option value="18:00">6:00 PM</option>
+                <option value="18:30">6:30 PM</option>
+                <option value="19:00">7:00 PM</option>
+                <option value="19:30">7:30 PM</option>
+                <option value="20:00">8:00 PM</option>
+                <option value="20:30">8:30 PM</option>
+                <option value="21:00">9:00 PM</option>
+                <option value="21:30">9:30 PM</option>
+                <option value="22:00">10:00 PM</option>
+                <option value="22:30">10:30 PM</option>
+                <option value="23:00">11:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Số Khách</label>
+            <select name="GuestCount" required>
+              <option value="">— Chọn số khách —</option>
+              <option value="1 - 2 người (bàn nhỏ)">1 - 2 người (bàn nhỏ)</option>
+              <option value="3 - 4 người (bàn cỡ trung)">3 - 4 người (bàn cỡ trung)</option>
+              <option value="5+ người (bàn lớn)">5+ người (bàn lớn)</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Ghi Chú Đặc Biệt</label><textarea name="Note" placeholder="Dị ứng thực phẩm, dịp kỷ niệm, yêu cầu đặc biệt…"></textarea></div>
+          <button type="submit" class="form-submit">Xác Nhận Đặt Bàn</button>
+      </form>
+    </div>
+  </div>
+</section>

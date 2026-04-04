@@ -1,0 +1,35 @@
+@{
+    Layout = "/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-body">
+    <div class="section-header">
+        <div class="section-header-left">
+            <h2>Hồ Sơ Của Tôi</h2>
+            <p>Quản lý thông tin cá nhân và cài đặt bảo mật</p>
+        </div>
+    </div>
+
+    <div class="manage-layout">
+        <aside class="manage-sidebar">
+            <partial name="_ManageNav" />
+        </aside>
+        <div class="manage-content">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+<style>
+    .manage-layout { display: flex; gap: 32px; align-items: flex-start; }
+    .manage-sidebar { width: 240px; flex-shrink: 0; background: var(--black-3); border: 1px solid rgba(201,168,76,.12); padding: 12px; }
+    .manage-content { flex: 1; background: var(--black-3); border: 1px solid rgba(201,168,76,.12); padding: 32px; min-height: 400px; }
+    
+    @@media (max-width: 992px) {
+        .manage-layout { flex-direction: column; }
+        .manage-sidebar { width: 100%; }
+    }
+</style>
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

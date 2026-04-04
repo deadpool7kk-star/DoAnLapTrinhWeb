@@ -1,0 +1,354 @@
+@model List<DoAnLapTrinhWeb.Models.RestaurantTable>
+@{
+    ViewData["Title"] = "Sơ Đồ Bàn";
+    Layout = "_AdminLayout";
+}
+
+<div class="table-map-container">
+    <div class="topbar-left" style="margin-bottom: 30px;">
+        <h1>Sơ Đồ Bàn & Trạng Thái</h1>
+        <p>Vermeil Fine Dining · 20 Bàn · 2 Tầng</p>
+    </div>
+
+    <!-- TABS TẦNG & BỘ LỌC -->
+    <div class="floor-nav-wrapper">
+        <div class="floor-tabs">
+            <button class="floor-tab active" onclick="switchFloor(1)">Tầng 1</button>
+            <button class="floor-tab" onclick="switchFloor(2)">Tầng 2</button>
+        </div>
+        
+        <div class="status-filter-wrapper">
+            <div class="custom-select" id="filterToggle" onclick="toggleFilter()" style="min-width: 180px;">
+                <span id="activeFilterText">Bộ lọc: Tất cả</span>
+                <span class="custom-select-arrow">▼</span>
+            </div>
+            <div class="custom-options" id="filterOptions">
+                <div class="custom-option selected" data-status="all" onclick="applyFilter(this)">Tất cả bàn</div>
+                <div class="custom-option" data-status="available" onclick="applyFilter(this)">
+                    <span class="dot" style="background:#2ecc71"></span> Trống
+                </div>
+                <div class="custom-option" data-status="occupied" onclick="applyFilter(this)">
+                    <span class="dot" style="background:#e74c3c"></span> Đang dùng
+                </div>
+                <div class="custom-option" data-status="reserved" onclick="applyFilter(this)">
+                    <span class="dot" style="background:var(--gold)"></span> Đã đặt
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SƠ ĐỒ TẦNG 1 -->
+    <div id="floor-1" class="floor-plan active">
+        <div class="grid-layout">
+            @foreach (var table in Model.Where(t => t.Floor == 1))
+            {
+                <div class="table-card @table.Status.ToLower()" onclick="showTableDetail(@table.Id, '@table.Name', @table.Capacity, '@table.Status')">
+                    <div class="table-header">
+                        <span class="table-name">@table.Name</span>
+                        <span class="table-status-dot"></span>
+                    </div>
+                    <div class="table-body">
+                        <div class="table-icon">
+                            @if (table.Capacity <= 2) { <span>🪑</span> }
+                            else if (table.Capacity <= 4) { <span>🪑🪑</span> }
+                            else { <span>👑</span> }
+                        </div>
+                        <div class="table-info">
+                            <strong>@table.Capacity Người</strong>
+                            <span>@GetStatusText(table.Status)</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- SƠ ĐỒ TẦNG 2 -->
+    <div id="floor-2" class="floor-plan">
+        <div class="grid-layout">
+            @foreach (var table in Model.Where(t => t.Floor == 2))
+            {
+                <div class="table-card @table.Status.ToLower()" onclick="showTableDetail(@table.Id, '@table.Name', @table.Capacity, '@table.Status')">
+                    <div class="table-header">
+                        <span class="table-name">@table.Name</span>
+                        <span class="table-status-dot"></span>
+                    </div>
+                    <div class="table-body">
+                        <div class="table-icon">
+                            @if (table.Capacity <= 2) { <span>🪑</span> }
+                            else if (table.Capacity <= 4) { <span>🪑🪑</span> }
+                            else { <span>👑</span> }
+                        </div>
+                        <div class="table-info">
+                            <strong>@table.Capacity Người</strong>
+                            <span>@GetStatusText(table.Status)</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CẬP NHẬT TRẠNG THÁI -->
+<div id="tableModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h2 id="modalTableName">Cập nhật Bàn</h2>
+            <button class="close-modal" onclick="closeTableModal()">&times;</button>
+        </div>
+        <form asp-action="UpdateStatus" method="post">
+            <input type="hidden" name="id" id="modalTableId" />
+            <div class="modal-body">
+                <p id="modalTableDetail" style="margin-bottom: 20px; color: var(--text-soft);"></p>
+                <div class="input-group">
+                    <label>Trạng Thái Hiện Tại</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select" id="customSelectTrigger" onclick="toggleCustomSelect()">
+                            <span id="selectedStatusText">Trống (Available)</span>
+                            <span class="custom-select-arrow">▼</span>
+                        </div>
+                        <div class="custom-options" id="customOptions">
+                            <div class="custom-option" data-value="Available" onclick="selectOption(this)">Trống (Available)</div>
+                            <div class="custom-option" data-value="Occupied" onclick="selectOption(this)">Đang dùng (Occupied)</div>
+                            <div class="custom-option" data-value="Reserved" onclick="selectOption(this)">Đã đặt (Reserved)</div>
+                        </div>
+                        <input type="hidden" name="status" id="modalTableStatus" value="Available" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeTableModal()">Hủy</button>
+                <button type="submit" class="btn-save">Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@functions {
+    public string GetStatusText(string status) => status switch
+    {
+        "Available" => "Trống",
+        "Occupied" => "Đang dùng",
+        "Reserved" => "Đã đặt",
+        _ => status
+    };
+}
+
+<style>
+    .floor-nav-wrapper { 
+        display: flex; justify-content: space-between; align-items: center; 
+        margin-bottom: 30px; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 15px; 
+    }
+    .floor-tabs { display: flex; gap: 10px; margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+    
+    .status-filter-wrapper { position: relative; }
+    .status-filter-wrapper .custom-options { width: 220px; right: 0; left: auto; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+
+    .floor-tab { 
+        background: transparent; border: none; color: var(--text-muted); 
+        padding: 8px 20px; cursor: pointer; font-family: 'Jost', sans-serif;
+        font-size: .9rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+        transition: all 0.3s;
+    }
+    .floor-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+    .floor-tab:hover:not(.active) { color: var(--gold-light); }
+
+    .floor-plan { display: none; animation: fadeIn .5s ease; }
+    .floor-plan.active { display: block; }
+
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+
+    .table-card { 
+        background: var(--black-4); border: 1px solid rgba(201,168,76,.12); 
+        border-radius: 16px; padding: 25px; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative; overflow: hidden;
+        display: flex; flex-direction: column; justify-content: space-between;
+        min-height: 160px;
+    }
+    .table-card:hover { transform: translateY(-8px); border-color: var(--gold); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+
+    .table-header { display: flex; justify-content: space-between; align-items: center; }
+    .table-name { font-size: 1rem; font-weight: 600; color: var(--gold-light); letter-spacing: .05em; }
+    .table-status-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    .table-body { display: flex; align-items: center; gap: 20px; flex-grow: 1; margin-top: 10px; }
+    .table-icon { font-size: 2.2rem; opacity: 0.9; filter: drop-shadow(0 0 8px rgba(201,168,76,0.2)); }
+    .table-info strong { display: block; font-size: 1.1rem; color: var(--cream); margin-bottom: 4px; }
+    .table-info span { font-size: .85rem; color: var(--text-muted); font-weight: 400; }
+
+    /* Modal Enhancements */
+    .modal-overlay { 
+        backdrop-filter: blur(10px); 
+        background: rgba(18,14,12,0.85);
+        transition: all 0.3s;
+    }
+    .modal-content {
+        background: var(--black-2);
+        border: 1px solid var(--gold);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        border-radius: 20px;
+        padding: 30px;
+        animation: modalSlideUp 0.4s ease;
+    }
+    @@keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .modal-header h2 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.8rem; margin: 0; }
+    
+    .close-modal {
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2);
+        color: var(--gold-light); width: 32px; height: 32px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.3s; font-size: 1.2rem;
+    }
+    .close-modal:hover { background: var(--red-deep); border-color: var(--red-mid); color: white; transform: rotate(90deg); }
+
+    .input-group label { 
+        display: block; font-size: .75rem; text-transform: uppercase; 
+        letter-spacing: .15em; color: var(--gold-light); margin-bottom: 12px;
+    }
+    
+    /* Custom Dropdown Styling */
+    .custom-select-wrapper { position: relative; user-select: none; }
+    .custom-select {
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--black-4); border: 1px solid rgba(201,168,76,0.3);
+        color: var(--cream); padding: 12px 15px; border-radius: 8px;
+        cursor: pointer; transition: all 0.3s; font-size: .88rem;
+    }
+    .custom-select:hover { border-color: var(--gold); }
+    .custom-select.open { border-color: var(--gold); border-bottom-left-radius: 0; border-bottom-right-radius: 0; box-shadow: 0 0 12px rgba(201,168,76,0.2); }
+    
+    .custom-select-arrow { font-size: 0.8rem; color: var(--gold); transition: transform 0.3s; }
+    .custom-select.open .custom-select-arrow { transform: rotate(180deg); }
+
+    .custom-options {
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--black-2); border: 1px solid var(--gold);
+        border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+        display: none; z-index: 100; overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .custom-select.open + .custom-options { display: block; }
+    
+    .custom-option {
+        padding: 12px 15px; color: var(--text-soft); cursor: pointer;
+        transition: all 0.2s; font-size: .88rem;
+    }
+    .custom-option:hover { background: rgba(201,168,76,0.1); color: var(--gold); }
+    .custom-option.selected { color: var(--gold); font-weight: 500; background: rgba(201,168,76,0.05); }
+
+    .modal-footer { margin-top: 40px; display: flex; gap: 15px; }
+    .btn-save { 
+        flex: 2; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        border: none; color: var(--black); padding: 12px; border-radius: 8px;
+        font-weight: 600; cursor: pointer; transition: all 0.3s;
+    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(201,168,76,0.3); }
+    .btn-cancel { 
+        flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1);
+        color: var(--text-muted); border-radius: 8px; cursor: pointer; transition: all 0.3s;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.05); color: var(--cream); }
+
+    /* Status Colors */
+    .table-card.available .table-status-dot { background: #2ecc71; box-shadow: 0 0 15px rgba(46,204,113,0.6); }
+    .table-card.available:hover { border-color: #2ecc71; }
+    
+    .table-card.occupied { border-left: 6px solid #e74c3c; }
+    .table-card.occupied .table-status-dot { background: #e74c3c; box-shadow: 0 0 15px rgba(231,76,60,0.6); }
+    
+    .table-card.reserved { border-left: 6px solid var(--gold); }
+    .table-card.reserved .table-status-dot { background: var(--gold); box-shadow: 0 0 15px rgba(201,168,76,0.6); }
+
+    @@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+    function switchFloor(floor) {
+        document.querySelectorAll('.floor-plan').forEach(f => f.classList.remove('active'));
+        document.querySelectorAll('.floor-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`floor-${floor}`).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function toggleFilter() {
+        document.getElementById('filterToggle').classList.toggle('open');
+    }
+
+    function applyFilter(el) {
+        const status = el.dataset.status;
+        const text = el.innerText.trim();
+        
+        document.getElementById('activeFilterText').innerText = 'Bộ lọc: ' + text;
+        
+        // Mark selected
+        document.querySelectorAll('#filterOptions .custom-option').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        // Hide/Show tables
+        const cards = document.querySelectorAll('.table-card');
+        cards.forEach(card => {
+            if (status === 'all' || card.classList.contains(status)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('filterToggle').classList.remove('open');
+    }
+
+    function showTableDetail(id, name, cap, status) {
+        document.getElementById('modalTableId').value = id;
+        document.getElementById('modalTableName').innerText = name;
+        document.getElementById('modalTableDetail').innerText = `Phân loại: Bàn ${cap} chỗ ngồi | Tầng ${id <= 10 ? 1 : 2}`;
+        
+        // Update custom select
+        const statusMap = {
+            'Available': 'Trống (Available)',
+            'Occupied': 'Đang dùng (Occupied)',
+            'Reserved': 'Đã đặt (Reserved)'
+        };
+        document.getElementById('modalTableStatus').value = status;
+        document.getElementById('selectedStatusText').innerText = statusMap[status] || status;
+        
+        // Mark selected option
+        document.querySelectorAll('.custom-option').forEach(opt => {
+            opt.classList.toggle('selected', opt.dataset.value === status);
+        });
+
+        document.getElementById('tableModal').classList.add('show');
+    }
+
+    function toggleCustomSelect() {
+        document.getElementById('customSelectTrigger').classList.toggle('open');
+    }
+
+    function selectOption(el) {
+        const value = el.dataset.value;
+        const text = el.innerText;
+        
+        document.getElementById('modalTableStatus').value = value;
+        document.getElementById('selectedStatusText').innerText = text;
+        
+        document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        document.getElementById('customSelectTrigger').classList.remove('open');
+    }
+
+    function closeTableModal() {
+        document.getElementById('tableModal').classList.remove('show');
+        document.getElementById('customSelectTrigger').classList.remove('open');
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        if (!document.getElementById('customSelectTrigger')?.contains(e.target)) {
+            document.getElementById('customSelectTrigger')?.classList.remove('open');
+        }
+    });
+</script>
