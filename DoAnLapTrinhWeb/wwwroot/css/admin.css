@@ -15,7 +15,7 @@
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; }
-    body {
+    body.login-body {
       font-family:'Jost',sans-serif;
       background:var(--black);
       color:var(--text-main);
@@ -51,7 +51,7 @@
     /* ── LOGIN CARD ── */
     .login-wrap {
       position:relative; z-index:2;
-      width:100%; max-width:440px;
+      width:100%; max-width:500px;
       padding:0 24px;
       animation:fadeUp .8s cubic-bezier(.22,1,.36,1) both;
     }
@@ -60,7 +60,7 @@
     .login-card {
       background:var(--black-3);
       border:1px solid rgba(201,168,76,.2);
-      padding:52px 48px;
+      padding:60px 52px;
       position:relative;
     }
     .login-card::before {
@@ -74,7 +74,7 @@
     }
     .login-logo span {
       font-family:'Playfair Display',serif;
-      font-size:2.2rem; font-weight:700;
+      font-size:2.6rem; font-weight:700;
       color:var(--gold); letter-spacing:.1em;
     }
     .login-logo sup { font-size:.5rem; color:var(--gold-light); font-style:italic; }
@@ -110,9 +110,9 @@
     }
     .form-group input {
       width:100%;
-      background:var(--black-4); border:1px solid rgba(201,168,76,.16);
-      padding:13px 16px 13px 42px;
-      font-family:'Jost',sans-serif; font-size:.88rem;
+      background:var(--black-4); border:1px solid rgba(201,168,76,0.16);
+      padding:15px 16px 15px 44px;
+      font-family:'Jost',sans-serif; font-size:0.92rem;
       color:var(--cream); outline:none; transition:border-color .25s, box-shadow .25s;
     }
     .form-group input::placeholder { color:rgba(245,237,224,.18); }
@@ -143,8 +143,8 @@
     .btn-login {
       width:100%;
       background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
-      background-size:200% 100%; color:var(--black); border:none; padding:15px;
-      font-family:'Jost',sans-serif; font-size:.8rem; font-weight:500;
+      background-size:200% 100%; color:var(--black); border:none; padding:18px;
+      font-family:'Jost',sans-serif; font-size:.85rem; font-weight:500;
       letter-spacing:.18em; text-transform:uppercase; cursor:pointer;
       box-shadow:0 6px 26px rgba(201,168,76,.2);
       transition:background-position .5s, box-shadow .3s, transform .2s;
@@ -191,7 +191,7 @@
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { 
+    body.admin-body {
       font-family:'Jost',sans-serif; 
       background:var(--black-2); 
       color:var(--text-main); 
@@ -295,10 +295,39 @@
       display:flex; align-items:center; justify-content:space-between;
       position:sticky; top:0; z-index:40;
     }
-    .topbar-left h1 {
-      font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:500; color:var(--cream);
+    .topbar-left { display: flex; align-items: center; }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid rgba(201,168,76,0.22);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(.22,1,.36,1);
+      margin-bottom: 0;
+      background: rgba(201,168,76,0.03);
     }
-    .topbar-left p { font-size:.75rem; color:var(--text-muted); margin-top:2px; }
+    .btn-back:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+      transform: translateX(-4px);
+    }
+    .btn-back span { font-size: 1rem; line-height: 1; }
+
+    .topbar-title-wrap { padding-left: 140px; }
+    .topbar-left h1 {
+      font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:500; color:var(--cream);
+      margin-bottom: 2px;
+    }
+    .topbar-left p { 
+      font-size:1.1rem; color:var(--text-muted); margin-top:0; 
+    }
     .topbar-right { display:flex; align-items:center; gap:14px; }
     .topbar-search {
       display:flex; align-items:center; gap:8px;

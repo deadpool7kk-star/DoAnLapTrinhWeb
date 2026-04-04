@@ -9,7 +9,7 @@
   <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
   <div class="hero-corner bl"></div><div class="hero-corner br"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow"><span>Fine Dining · Hà Nội · Est. 2012</span></div>
+    <div class="hero-eyebrow"><span>Fine Dining · Sài Gòn · Est. 2012</span></div>
     <h1 class="hero-title">
       Nghệ Thuật
       <em>Ẩm Thực</em>
@@ -19,6 +19,12 @@
     <div class="hero-btns">
       <button class="btn-gold" onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})">Khám Phá Thực Đơn</button>
       <button class="btn-ghost" onclick="document.getElementById('reservation').scrollIntoView({behavior: 'smooth'})">Đặt Bàn Ngay</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="visual-inner">
+      <img src="https://i.pinimg.com/736x/16/57/76/1657768b64383d87f0dccde854e6eecb.jpg" alt="Vermeil Fine Dining Excellence" />
+      <div class="visual-deco-frame"></div>
     </div>
   </div>
   <div class="hero-scroll">Cuộn Xuống</div>
@@ -63,7 +69,7 @@
             </div>
             @if(!string.IsNullOrEmpty(item.Badge))
             {
-                <span class="menu-badge @(item.Badge.ToLower() == "signature" ? "gold" : (item.Badge.ToLower() == "mới" ? "gold" : "dim"))">@item.Badge</span>
+                <span class="menu-badge gold">@item.Badge</span>
             }
           </div>
           <h4>@item.Name</h4>
@@ -92,7 +98,9 @@
   <div class="about-grid">
     <div class="about-visual">
       <div class="about-frame-outer"></div>
-      <div class="about-frame-inner">🍷</div>
+      <div class="about-frame-inner">
+        <img src="https://i.pinimg.com/736x/e1/2c/b5/e12cb5bf6722cc47bfcf54562f777160.jpg" alt="Vermeil Atmosphere" />
+      </div>
       <div class="about-corner-deco"></div>
       <div class="about-corner-deco br"></div>
       <div class="about-badge-float">
@@ -231,8 +239,8 @@
   }
   #menuGrid .menu-badge {
     position: absolute;
-    top: -15px; /* Đưa nhãn cao hẳn ra ngoài góc ảnh */
-    right: -15px; /* Đưa nhãn ngang hẳn ra ngoài góc ảnh */
+    top: -10px; /* Đưa nhãn cao hẳn ra ngoài góc ảnh */
+    right: -60px; /* Đưa nhãn ngang hẳn ra ngoài góc ảnh */
     z-index: 10;
     margin: 0;
     transform: scale(0.85);
