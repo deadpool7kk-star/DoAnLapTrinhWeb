@@ -77,8 +77,14 @@
 <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h1>@(ViewData["Title"] ?? "Admin Dashboard")</h1>
-      <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+      @if (ViewData["ShowBack"] != null && (bool)ViewData["ShowBack"])
+      {
+          <a href="@(ViewData["BackUrl"] ?? "javascript:history.back()")" class="btn-back"><span>←</span> Quay lại</a>
+      }
+      <div class="topbar-title-wrap">
+          <h1>@(ViewData["Title"] ?? "Admin Dashboard")</h1>
+          <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="topbar-search">

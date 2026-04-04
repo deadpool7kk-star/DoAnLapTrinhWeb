@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Quản Lý Đặt Bàn";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["ShowBack"] = true;
+    ViewData["BackUrl"] = Url.Action("Index", "Home");
 }
 
 <div class="page-body">
