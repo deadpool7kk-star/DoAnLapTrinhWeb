@@ -123,6 +123,10 @@
 </div>
 
 @section Scripts {
+    <div id="antiforgery-token-container" style="display:none;">
+        @Html.AntiForgeryToken()
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function markAsPaid(id) {
@@ -139,9 +143,16 @@
                 cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post('/AdminInvoices/MarkAsPaid/' + id, function(data) {
-                        if (data.success) {
-                            location.reload();
+                    $.ajax({
+                        url: '/AdminInvoices/MarkAsPaid/' + id,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(data) {
+                            if (data.success) {
+                                location.reload();
+                            }
                         }
                     });
                 }

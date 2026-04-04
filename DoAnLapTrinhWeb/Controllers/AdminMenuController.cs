@@ -22,11 +22,11 @@ namespace DoAnLapTrinhWeb.Controllers
         {
             var dishes = await _context.Dishes
                 .Include(d => d.Category)
-                .Where(d => d.Category.Name != "Trạng Miệng")
+                .Where(d => d.Category.Name != "Tráng Miệng")
                 .ToListAsync();
 
             var categories = await _context.Categories
-                .Where(c => c.Name != "Trạng Miệng")
+                .Where(c => c.Name != "Tráng Miệng")
                 .ToListAsync();
             
             ViewBag.Categories = categories;
