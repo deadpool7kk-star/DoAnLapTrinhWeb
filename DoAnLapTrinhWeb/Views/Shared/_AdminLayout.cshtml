@@ -31,7 +31,7 @@
     </a>
 
     <div class="nav-section-label">Vận Hành</div>
-    <a href="#" class="nav-item">
+    <a asp-area="" asp-controller="AdminTables" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTables" ? "active" : "")">
       <span class="nav-icon">🪑</span> Sơ Đồ Bàn
     </a>
     <a href="#" class="nav-item">
@@ -54,17 +54,19 @@
   @inject UserManager<ApplicationUser> UserManager
 
   <div class="sidebar-footer">
-    <div class="admin-info">
-      <div class="admin-avatar">👑</div>
-      <div class="admin-detail">
-        @{
-            var currentUser = await UserManager.GetUserAsync(User);
-            var displayName = currentUser?.FullName ?? "HuuTriAdmin";
-        }
-        <strong>@displayName</strong>
-        <span>Super Admin</span>
+    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="admin-profile-link" title="Xem hồ sơ" style="text-decoration:none; color:inherit;">
+      <div class="admin-info">
+        <div class="admin-avatar">👑</div>
+        <div class="admin-detail">
+          @{
+              var currentUser = await UserManager.GetUserAsync(User);
+              var displayName = currentUser?.FullName ?? "HuuTriAdmin";
+          }
+          <strong>@displayName</strong>
+          <span>Super Admin</span>
+        </div>
       </div>
-    </div>
+    </a>
     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
         <button type="submit" class="btn-logout" style="width:100%; text-align:left; border:none; cursor:pointer;">⬡ ĐĂNG XUẤT</button>
     </form>
@@ -75,7 +77,7 @@
 <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h1>Quản Lý Thực Đơn</h1>
+      <h1>@(ViewData["Title"] ?? "Admin Dashboard")</h1>
       <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
     </div>
     <div class="topbar-right">
@@ -83,6 +85,7 @@
         <span>🔍</span>
         <input type="text" id="topbarSearch" placeholder="Tìm kiếm món ăn..."/>
       </div>
+      @await Component.InvokeAsync("NotificationBell")
     </div>
   </div>
   @RenderBody()

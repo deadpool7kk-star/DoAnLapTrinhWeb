@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vermeil — Fine Dining</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:      #0a0706;
+      --black-2:    #120e0c;
+      --black-3:    #1c1512;
+      --black-4:    #2a1f1a;
+      --red-deep:   #7a1515;
+      --red-mid:    #9e2020;
+      --gold:       #c9a84c;
+      --gold-light: #e2c47a;
+      --gold-pale:  #f0dca0;
+      --cream:      #f5ede0;
+      --text-muted: rgba(245,237,224,0.42);
+      --text-soft:  rgba(245,237,224,0.68);
+      --text-main:  rgba(245,237,224,0.92);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Jost',sans-serif; background:var(--black); color:var(--text-main); overflow-x:hidden; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--black); }
+    ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; width:100%; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:28px 70px;
+      background:linear-gradient(180deg,rgba(10,7,6,.96) 0%,transparent 100%);
+      transition:padding .4s, background .4s;
+    }
+    nav.scrolled {
+      padding:15px 70px;
+      background:rgba(10,7,6,.97);
+      border-bottom:1px solid rgba(201,168,76,.18);
+      backdrop-filter:blur(10px);
+    }
+    .nav-logo {
+      font-family:'Playfair Display',serif; font-size:1.75rem; font-weight:700;
+      color:var(--gold); letter-spacing:.07em; text-decoration:none;
+    }
+    .nav-logo sup { font-size:.5rem; vertical-align:super; color:var(--gold-light); font-style:italic; letter-spacing:.15em; }
+    .nav-links { display:flex; gap:42px; list-style:none; }
+    .nav-links a {
+      text-decoration:none; font-size:.78rem; font-weight:500;
+      color:var(--text-soft); letter-spacing:.15em; text-transform:uppercase;
+      position:relative; padding-bottom:4px; transition:color .3s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+      width:0; height:1px; background:var(--gold); transition:width .3s;
+    }
+    .nav-links a:hover { color:var(--gold-light); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-cta {
+      background:transparent; color:var(--gold); border:1px solid var(--gold);
+      padding:10px 30px; font-family:'Jost',sans-serif; font-size:.76rem;
+      font-weight:500; letter-spacing:.15em; text-transform:uppercase;
+      cursor:pointer; transition:all .3s;
+    }
+    .nav-cta:hover { background:var(--gold); color:var(--black); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height:100vh; position:relative;
+      display:flex; align-items:center; overflow:hidden;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 55% 65% at 72% 52%, rgba(122,21,21,.38) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 45% at 18% 78%, rgba(201,168,76,.07) 0%, transparent 55%),
+        linear-gradient(155deg, #0a0706 0%, #1a0c09 40%, #0f0808 100%);
+    }
+    .hero-grid {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:
+        linear-gradient(rgba(201,168,76,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,.035) 1px, transparent 1px);
+      background-size:80px 80px;
+    }
+    .hero-corner { position:absolute; width:90px; height:90px; border-color:rgba(201,168,76,.32); border-style:solid; }
+    .hero-corner.tl { top:76px; left:56px; border-width:1px 0 0 1px; }
+    .hero-corner.tr { top:76px; right:56px; border-width:1px 1px 0 0; }
+    .hero-corner.bl { bottom:56px; left:56px; border-width:0 0 1px 1px; }
+    .hero-corner.br { bottom:56px; right:56px; border-width:0 1px 1px 0; }
+
+    .hero-content {
+      position:relative; z-index:2; padding:0 70px; max-width:800px;
+      animation:heroIn .9s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes heroIn{ from{opacity:0;transform:translateY(38px)} to{opacity:1;transform:translateY(0)} }
+    .hero-eyebrow {
+      display:flex; align-items:center; gap:14px; margin-bottom:34px;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after { content:''; width:34px; height:1px; background:var(--gold); }
+    .hero-eyebrow span { font-size:.72rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:500; }
+    .hero-title {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(3.2rem,6vw,6.2rem);
+      font-weight:400; line-height:1.06; color:var(--cream); letter-spacing:-.01em;
+    }
+    .hero-title em { font-style:italic; color:var(--gold-light); display:block; }
+    .hero-title .outline { -webkit-text-stroke:1px rgba(201,168,76,.45); color:transparent; display:block; }
+    .hero-sub {
+      font-size:.97rem; color:var(--text-soft); line-height:1.88;
+      max-width:460px; font-weight:300; margin:30px 0 52px;
+      border-left:2px solid var(--red-mid); padding-left:20px;
+    }
+    .hero-btns { display:flex; gap:16px; flex-wrap:wrap; }
+    .btn-gold {
+      background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+      background-size:200% 100%; color:var(--black); border:none;
+      padding:16px 44px; font-family:'Jost',sans-serif; font-size:.8rem;
+      font-weight:500; letter-spacing:.16em; text-transform:uppercase; cursor:pointer;
+      box-shadow:0 8px 30px rgba(201,168,76,.22); transition:background-position .5s, box-shadow .3s, transform .3s;
+      text-decoration:none; display:inline-block;
+    }
+    .btn-gold:hover { background-position:100% 0; box-shadow:0 14px 40px rgba(201,168,76,.38); transform:translateY(-2px); }
+    .btn-ghost {
+      background:transparent; color:var(--cream); border:1px solid rgba(245,237,224,.22);
+      padding:15px 44px; font-family:'Jost',sans-serif; font-size:.8rem;
+      font-weight:500; letter-spacing:.16em; text-transform:uppercase; cursor:pointer;
+      transition:all .3s; text-decoration:none; display:inline-block;
+    }
+    .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+    .hero-scroll {
+      position:absolute; bottom:44px; left:50%; transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      color:var(--text-muted); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase;
+      animation:scrollBounce 2.5s ease-in-out infinite;
+    }
+    .hero-scroll::after { content:''; width:1px; height:48px; background:linear-gradient(180deg,var(--gold),transparent); }
+    @keyframes scrollBounce{ 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(9px)} }
+
+    /* ── STATS ── */
+    .stats-strip {
+      background:var(--black-3);
+      border-top:1px solid rgba(201,168,76,.16);
+      border-bottom:1px solid rgba(201,168,76,.16);
+      padding:40px 70px; display:flex; justify-content:center;
+    }
+    .stat-item { flex:1; max-width:220px; text-align:center; padding:0 32px; position:relative; }
+    .stat-item + .stat-item::before {
+      content:''; position:absolute; left:0; top:10%; height:80%; width:1px; background:rgba(201,168,76,.18);
+    }
+    .stat-num { font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:500; color:var(--gold); line-height:1; margin-bottom:8px; }
+    .stat-label { font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted); }
+
+    /* ── SECTION SHARED ── */
+    section { padding:110px 70px; position:relative; z-index:1; }
+    .section-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .section-eyebrow::before { content:'◆'; font-size:.42rem; color:var(--red-mid); }
+    .section-eyebrow span { font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:500; }
+    .section-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,3.5vw,3.4rem); font-weight:400; line-height:1.15; color:var(--cream); }
+    .section-title em { font-style:italic; color:var(--gold-light); }
+
+    /* ── ORNAMENT ── */
+    .ornament { display:flex; align-items:center; justify-content:center; gap:14px; margin:0 auto 52px; }
+    .ornament::before, .ornament::after { content:''; flex:1; max-width:100px; height:1px; }
+    .ornament::before { background:linear-gradient(90deg,transparent,var(--gold)); }
+    .ornament::after  { background:linear-gradient(90deg,var(--gold),transparent); }
+    .ornament span { font-size:.72rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:500; white-space:nowrap; }
+
+    /* ── MENU ── */
+    #menu { background:var(--black-2); }
+    .menu-header { text-align:center; margin-bottom:52px; }
+    .menu-header .section-eyebrow { justify-content:center; }
+    .menu-header p { color:var(--text-muted); font-size:.9rem; font-weight:300; max-width:480px; margin:18px auto 0; line-height:1.8; }
+    .menu-tabs {
+      display:flex; justify-content:center; gap:0; margin-bottom:52px;
+      border:1px solid rgba(201,168,76,.2); width:fit-content; margin-left:auto; margin-right:auto;
+    }
+    .tab-btn {
+      padding:12px 30px; background:transparent; border:none;
+      border-right:1px solid rgba(201,168,76,.2);
+      color:var(--text-muted); font-family:'Jost',sans-serif;
+      font-size:.76rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+    }
+    .tab-btn:last-child { border-right:none; }
+    .tab-btn:hover { color:var(--gold); background:rgba(201,168,76,.05); }
+    .tab-btn.active { background:var(--gold); color:var(--black); }
+
+    .menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(201,168,76,.1); }
+    .menu-card { background:var(--black-2); padding:34px 30px; transition:background .3s; display:flex; flex-direction:column; gap:14px; }
+    .menu-card:hover { background:var(--black-3); }
+    .menu-card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .menu-icon {
+      font-size:2rem; width:54px; height:54px;
+      background:var(--black-4); border:1px solid rgba(201,168,76,.18);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .menu-badge { font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; padding:4px 12px; border:1px solid; font-weight:500; white-space:nowrap; }
+    .menu-badge.gold { color:var(--gold); border-color:rgba(201,168,76,.38); }
+    .menu-badge.red  { color:#e08080; border-color:rgba(192,57,43,.38); }
+    .menu-badge.dim  { color:var(--text-muted); border-color:rgba(245,237,224,.14); }
+    .menu-card h4 { font-family:'Playfair Display',serif; font-size:1.18rem; font-weight:500; color:var(--cream); line-height:1.3; }
+    .menu-card p { font-size:.84rem; color:var(--text-muted); line-height:1.75; font-weight:300; flex:1; }
+    .menu-card-footer { display:flex; justify-content:space-between; align-items:center; padding-top:14px; border-top:1px solid rgba(201,168,76,.1); }
+    .price { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--gold); font-weight:500; }
+    .add-btn {
+      width:32px; height:32px; border:1px solid rgba(201,168,76,.32); background:transparent;
+      color:var(--gold); font-size:1.05rem; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all .25s;
+    }
+    .add-btn:hover { background:var(--gold); color:var(--black); }
+
+    /* ── ABOUT ── */
+    #about { background:var(--black-2); border-top:1px solid rgba(201,168,76,.1); border-bottom:1px solid rgba(201,168,76,.1); }
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:90px; align-items:center; }
+    .about-visual { position:relative; height:560px; }
+    .about-frame-outer { position:absolute; inset:0; border:1px solid rgba(201,168,76,.14); }
+    .about-frame-inner {
+      position:absolute; inset:20px;
+      background:linear-gradient(145deg, var(--red-deep) 0%, #3d0c0c 50%, var(--black-4) 100%);
+      display:flex; align-items:center; justify-content:center; font-size:8rem; overflow:hidden;
+    }
+    .about-frame-inner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center,transparent 40%,rgba(10,7,6,.6) 100%); }
+    .about-badge-float {
+      position:absolute; right:-20px; bottom:80px;
+      background:var(--black); border:1px solid rgba(201,168,76,.28);
+      padding:20px 26px; min-width:155px; box-shadow:0 20px 50px rgba(0,0,0,.5);
+    }
+    .about-badge-float .num { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); line-height:1; margin-bottom:6px; }
+    .about-badge-float .lbl { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+    .about-corner-deco { position:absolute; top:0; left:0; width:56px; height:56px; border-top:2px solid var(--gold); border-left:2px solid var(--gold); }
+    .about-corner-deco.br { top:auto; left:auto; right:0; bottom:0; border-top:none; border-left:none; border-bottom:2px solid var(--gold); border-right:2px solid var(--gold); }
+    .about-text .section-title { margin-bottom:24px; }
+    .about-divider { width:44px; height:1px; background:linear-gradient(90deg,var(--gold),transparent); margin:26px 0; }
+    .about-text > p { color:var(--text-soft); font-size:.92rem; line-height:1.9; font-weight:300; margin-bottom:16px; }
+    .about-awards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:32px; }
+    .award {
+      border:1px solid rgba(201,168,76,.16); padding:16px 18px; background:var(--black-4);
+      display:flex; align-items:center; gap:12px; transition:border-color .3s;
+    }
+    .award:hover { border-color:rgba(201,168,76,.42); }
+    .award-icon { font-size:1.2rem; flex-shrink:0; }
+    .award-text strong { display:block; font-size:.8rem; color:var(--cream); font-weight:500; margin-bottom:2px; }
+    .award-text span { font-size:.72rem; color:var(--text-muted); }
+
+    /* ── RESERVATION ── */
+    #reservation { background:var(--black); }
+    .res-wrap { display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:start; }
+    .res-info { position:sticky; top:120px; }
+    .res-info .section-title { margin-bottom:24px; }
+    .res-info > p { color:var(--text-soft); font-size:.91rem; line-height:1.9; font-weight:300; margin-bottom:42px; }
+    .contact-list { display:flex; flex-direction:column; }
+    .contact-row { display:flex; align-items:center; gap:16px; padding:18px 0; border-bottom:1px solid rgba(201,168,76,.1); }
+    .contact-row:first-child { border-top:1px solid rgba(201,168,76,.1); }
+    .contact-icon { width:42px; height:42px; border:1px solid rgba(201,168,76,.22); display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--gold); flex-shrink:0; }
+    .contact-text strong { display:block; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); font-weight:400; margin-bottom:3px; }
+    .contact-text span { font-size:.88rem; color:var(--text-soft); }
+    .res-form-wrap { border:1px solid rgba(201,168,76,.2); background:var(--black-3); padding:46px 42px; }
+    .res-form-wrap h3 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--cream); margin-bottom:6px; }
+    .res-form-wrap > p { font-size:.75rem; color:var(--text-muted); letter-spacing:.1em; text-transform:uppercase; margin-bottom:34px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+    .form-group label { font-size:.7rem; font-weight:500; color:var(--text-muted); letter-spacing:.15em; text-transform:uppercase; }
+    .form-group input, .form-group select, .form-group textarea {
+      background:var(--black-4); border:1px solid rgba(201,168,76,.16);
+      padding:13px 15px; font-family:'Jost',sans-serif; font-size:.87rem;
+      color:var(--cream); outline:none; transition:border-color .25s;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(245,237,224,.18); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--gold); }
+    .form-group select option { background:var(--black-4); }
+    .form-group textarea { resize:vertical; min-height:86px; }
+    .form-submit {
+      width:100%; margin-top:8px;
+      background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+      background-size:200% 100%; color:var(--black); border:none; padding:15px;
+      font-family:'Jost',sans-serif; font-size:.78rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+      cursor:pointer; transition:background-position .5s, box-shadow .3s, transform .3s;
+      box-shadow:0 6px 26px rgba(201,168,76,.18);
+    }
+    .form-submit:hover { background-position:100% 0; box-shadow:0 12px 38px rgba(201,168,76,.34); transform:translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { background:var(--black); border-top:1px solid rgba(201,168,76,.16); padding:68px 70px 36px; }
+    .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:56px; margin-bottom:52px; }
+    .footer-brand .nav-logo { display:block; margin-bottom:18px; font-size:1.8rem; }
+    .footer-brand p { font-size:.84rem; color:var(--text-muted); line-height:1.85; max-width:250px; }
+    .social-row { display:flex; gap:10px; margin-top:26px; }
+    .social-btn { width:36px; height:36px; border:1px solid rgba(201,168,76,.22); display:flex; align-items:center; justify-content:center; font-size:.8rem; color:var(--text-muted); cursor:pointer; transition:all .25s; font-weight:500; }
+    .social-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .footer-col h5 { font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; font-weight:500; }
+    .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:12px; }
+    .footer-col ul a { color:var(--text-muted); text-decoration:none; font-size:.85rem; font-weight:300; transition:color .25s; }
+    .footer-col ul a:hover { color:var(--gold-light); }
+    .footer-bottom { border-top:1px solid rgba(201,168,76,.1); padding-top:26px; display:flex; justify-content:space-between; align-items:center; }
+    .footer-bottom span { font-size:.76rem; color:rgba(245,237,224,.2); }
+    .footer-links { display:flex; align-items:center; gap:16px; }
+    .footer-links a { color:rgba(245,237,224,.2); text-decoration:none; font-size:.76rem; transition:color .25s; }
+    .footer-links a:hover { color:var(--gold); }
+    .footer-links .sep { width:1px; height:10px; background:rgba(201,168,76,.22); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1100px){
+      .menu-grid { grid-template-columns:1fr 1fr; }
+      .footer-top { grid-template-columns:1fr 1fr; gap:40px; }
+    }
+    @media(max-width:900px){
+      nav, nav.scrolled { padding:16px 26px; }
+      .nav-links { display:none; }
+      section { padding:78px 26px; }
+      .stats-strip { padding:34px 26px; flex-wrap:wrap; gap:24px; }
+      .res-wrap, .about-grid { grid-template-columns:1fr; gap:56px; }
+      .res-info { position:static; }
+      .about-visual { height:300px; }
+      .about-badge-float { right:0; bottom:30px; }
+      .hero-content { padding:0 26px; }
+      .hero-corner.tr, .hero-corner.br { right:20px; }
+      .hero-corner.tl, .hero-corner.bl { left:20px; }
+      footer { padding:50px 26px 30px; }
+    }
+    @media(max-width:620px){
+      .menu-grid { grid-template-columns:1fr; }
+      .menu-tabs { flex-wrap:wrap; width:100%; }
+      .tab-btn { border-right:none; border-bottom:1px solid rgba(201,168,76,.18); flex:1; min-width:130px; }
+      .form-row { grid-template-columns:1fr; }
+      .res-form-wrap { padding:26px 20px; }
+      .about-awards { grid-template-columns:1fr; }
+      .footer-top { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">VERMEIL<sup>®</sup></a>
+  <ul class="nav-links">
+    <li><a href="#hero">Trang Chủ</a></li>
+    <li><a href="#menu">Thực Đơn</a></li>
+    <li><a href="#about">Về Chúng Tôi</a></li>
+    <li><a href="#reservation">Liên Hệ</a></li>
+  </ul>
+  <button class="nav-cta">Đặt Bàn</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div><div class="hero-corner br"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span>Fine Dining · Hà Nội · Est. 2012</span></div>
+    <h1 class="hero-title">
+      Nghệ Thuật
+      <em>Ẩm Thực</em>
+      <span class="outline">Đỉnh Cao</span>
+    </h1>
+    <p class="hero-sub">Trải nghiệm ẩm thực hoàng gia với nguyên liệu thượng hạng, không gian sang trọng và dịch vụ đẳng cấp quốc tế — nơi mỗi bữa ăn trở thành ký ức không thể quên.</p>
+    <div class="hero-btns">
+      <button class="btn-gold">Khám Phá Thực Đơn</button>
+      <button class="btn-ghost">Đặt Bàn Ngay</button>
+    </div>
+  </div>
+  <div class="hero-scroll">Cuộn Xuống</div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Năm Kinh Nghiệm</div></div>
+  <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Đánh Giá Trung Bình</div></div>
+  <div class="stat-item"><div class="stat-num">50k+</div><div class="stat-label">Lượt Khách</div></div>
+  <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Giải Thưởng Quốc Tế</div></div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header">
+    <div class="section-eyebrow"><span>Thực Đơn</span></div>
+    <h2 class="section-title">Tinh Hoa <em>Ẩm Thực</em></h2>
+    <p>Mỗi món ăn là một tác phẩm được chắt lọc từ nguyên liệu tươi sạch nhất, chế biến bởi đội ngũ bếp trưởng đẳng cấp quốc tế.</p>
+  </div>
+  <div class="menu-tabs">
+    <button class="tab-btn active">Tất Cả</button>
+    <button class="tab-btn">Khai Vị</button>
+    <button class="tab-btn">Món Chính</button>
+    <button class="tab-btn">Tráng Miệng</button>
+    <button class="tab-btn">Đồ Uống</button>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🥗</div><span class="menu-badge dim">Khai Vị</span></div>
+      <h4>Salad Rau Mầm Hữu Cơ</h4>
+      <p>Hỗn hợp rau mầm tươi với sốt dầu mè, phủ hạt thông rang và phô mai parmesan bào mỏng tinh tế.</p>
+      <div class="menu-card-footer"><span class="price">85.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍤</div><span class="menu-badge red">Phổ Biến</span></div>
+      <h4>Tôm Sú Nướng Thảo Mộc</h4>
+      <p>Tôm sú tươi nướng than hoa với bơ tỏi thảo mộc Địa Trung Hải, dùng kèm bánh mì baguette giòn.</p>
+      <div class="menu-card-footer"><span class="price">145.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🐟</div><span class="menu-badge gold">Mới</span></div>
+      <h4>Cá Hồi Sốt Chanh Bơ</h4>
+      <p>Fillet cá hồi Na Uy áp chảo vàng, phục vụ với măng tây Pháp và khoai tây nghiền kem tươi thượng hạng.</p>
+      <div class="menu-card-footer"><span class="price">295.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🥩</div><span class="menu-badge gold">Signature</span></div>
+      <h4>Bò Wagyu A5 Áp Chảo</h4>
+      <p>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</p>
+      <div class="menu-card-footer"><span class="price">480.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍝</div><span class="menu-badge dim">Chef's Pick</span></div>
+      <h4>Pasta Nấm Truffle Đen</h4>
+      <p>Linguine tươi xào với nấm rừng hỗn hợp, dầu truffle đen Périgord và kem tươi Pháp thượng hạng.</p>
+      <div class="menu-card-footer"><span class="price">225.000₫</span><button class="add-btn">+</button></div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-top"><div class="menu-icon">🍮</div><span class="menu-badge gold">Mới</span></div>
+      <h4>Panna Cotta Vanilla Bourbon</h4>
+      <p>Panna cotta kem tươi hương vanilla Madagascar, coulis dâu tây tươi và lá bạc hà kết hợp hài hoà.</p>
+      <div class="menu-card-footer"><span class="price">95.000₫</span><button class="add-btn">+</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-frame-outer"></div>
+      <div class="about-frame-inner">🍷</div>
+      <div class="about-corner-deco"></div>
+      <div class="about-corner-deco br"></div>
+      <div class="about-badge-float">
+        <div class="num">12+</div>
+        <div class="lbl">Năm Thành Lập</div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-eyebrow"><span>Về Chúng Tôi</span></div>
+      <h2 class="section-title">Nơi Sang Trọng <em>Gặp Gỡ</em> Đam Mê</h2>
+      <div class="about-divider"></div>
+      <p>Vermeil được thành lập năm 2012 với triết lý đơn giản nhưng đầy tham vọng — tạo ra không gian ẩm thực đỉnh cao nơi mỗi bữa ăn là một hành trình trải nghiệm đa giác quan.</p>
+      <p>Đội ngũ bếp trưởng được đào tạo tại Paris, Tokyo và New York, mang về tinh hoa ẩm thực thế giới và kết hợp khéo léo với nguyên liệu bản địa Việt Nam thuần khiết nhất.</p>
+      <div class="about-awards">
+        <div class="award"><div class="award-icon">🏆</div><div class="award-text"><strong>Michelin Guide 2023</strong><span>Nhà hàng được khuyên dùng</span></div></div>
+        <div class="award"><div class="award-icon">🥇</div><div class="award-text"><strong>Asia's Best 2024</strong><span>Top 50 Restaurants</span></div></div>
+        <div class="award"><div class="award-icon">⭐</div><div class="award-text"><strong>Foody Awards</strong><span>Top 10 Fine Dining HN</span></div></div>
+        <div class="award"><div class="award-icon">🍷</div><div class="award-text"><strong>Wine Spectator</strong><span>Award of Excellence</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="ornament"><span>Đặt Bàn Trực Tuyến</span></div>
+  <div class="res-wrap">
+    <div class="res-info">
+      <div class="section-eyebrow"><span>Liên Hệ & Đặt Chỗ</span></div>
+      <h2 class="section-title">Dành Riêng <em>Bàn Của Bạn</em></h2>
+      <p>Hãy để chúng tôi chuẩn bị một buổi tối hoàn hảo — đặt bàn trước để đảm bảo trải nghiệm tốt nhất và nhận những ưu đãi dành riêng cho thực khách.</p>
+      <div class="contact-list">
+        <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-text"><strong>Địa chỉ</strong><span>12 Phố Hoàng Diệu, Ba Đình, Hà Nội</span></div></div>
+        <div class="contact-row"><div class="contact-icon">🕐</div><div class="contact-text"><strong>Giờ mở cửa</strong><span>Thứ 2 – Chủ Nhật: 10:00 — 22:30</span></div></div>
+        <div class="contact-row"><div class="contact-icon">📞</div><div class="contact-text"><strong>Điện thoại</strong><span>(024) 3826 5500 · 0912 345 678</span></div></div>
+        <div class="contact-row"><div class="contact-icon">✉️</div><div class="contact-text"><strong>Email</strong><span>hello@vermeil.vn</span></div></div>
+      </div>
+    </div>
+    <form class="res-form-wrap" action="/Reservation/SubmitBooking" method="post">
+      <h3>Đặt Bàn Ngay</h3>
+      <p>Điền thông tin · Nhận xác nhận ngay</p>
+      <div class="form-row">
+        <div class="form-group"><label>Họ & Tên</label><input type="text" name="CustomerName" required placeholder="Nguyễn Văn A"/></div>
+        <div class="form-group"><label>Số Điện Thoại</label><input type="tel" name="PhoneNumber" required placeholder="0912 345 678"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Ngày</label><input type="date" name="ReservationDate" required/></div>
+        <div class="form-group"><label>Giờ</label><input type="time" name="ReservationTime" required/></div>
+      </div>
+      <div class="form-group">
+        <label>Số Khách</label>
+        <select name="GuestCount" required>
+          <option value="">— Chọn số khách —</option>
+          <option value="1 người">1 người</option>
+          <option value="2 người">2 người</option>
+          <option value="3 – 4 người">3 – 4 người</option>
+          <option value="5 – 6 người">5 – 6 người</option>
+          <option value="7+ người (sự kiện)">7+ người (sự kiện)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Ghi Chú Đặc Biệt</label><textarea name="SpecialRequests" placeholder="Dị ứng thực phẩm, dịp kỷ niệm, yêu cầu đặc biệt…"></textarea></div>
+      <button type="submit" class="form-submit">Xác Nhận Đặt Bàn</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#hero" class="nav-logo">VERMEIL<sup style="color:var(--gold-light)">®</sup></a>
+      <p>Nơi giao thoa giữa nghệ thuật ẩm thực đỉnh cao và không gian sang trọng tinh tế.</p>
+      <div class="social-row">
+        <div class="social-btn">f</div>
+        <div class="social-btn">in</div>
+        <div class="social-btn">ig</div>
+        <div class="social-btn">yt</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Khám Phá</h5>
+      <ul>
+        <li><a href="#hero">Trang Chủ</a></li>
+        <li><a href="#menu">Thực Đơn</a></li>
+        <li><a href="#about">Về Chúng Tôi</a></li>
+        <li><a href="#reservation">Đặt Bàn</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Dịch Vụ</h5>
+      <ul>
+        <li><a href="#">Tiệc Riêng Tư</a></li>
+        <li><a href="#">Sự Kiện Công Ty</a></li>
+        <li><a href="#">Wine Pairing</a></li>
+        <li><a href="#">Chef's Table</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Liên Hệ</h5>
+      <ul>
+        <li><a href="#">12 Phố Hoàng Diệu</a></li>
+        <li><a href="#">(024) 3826 5500</a></li>
+        <li><a href="#">hello@vermeil.vn</a></li>
+        <li><a href="#">10:00 — 22:30 hàng ngày</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Vermeil Fine Dining. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="#">Chính Sách</a><div class="sep"></div>
+      <a href="#">Điều Khoản</a><div class="sep"></div>
+      <a href="#">Bảo Mật</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+</script>
+</body>
+</html>

@@ -1,179 +1,12 @@
-/* ================== LOGIN STYLE ================== */
-:root {
-      --black:      #0a0706;
-      --black-2:    #120e0c;
-      --black-3:    #1c1512;
-      --black-4:    #2a1f1a;
-      --red-deep:   #7a1515;
-      --red-mid:    #9e2020;
-      --gold:       #c9a84c;
-      --gold-light: #e2c47a;
-      --cream:      #f5ede0;
-      --text-muted: rgba(245,237,224,0.42);
-      --text-soft:  rgba(245,237,224,0.68);
-      --text-main:  rgba(245,237,224,0.92);
-    }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    html, body { height:100%; }
-    body {
-      font-family:'Jost',sans-serif;
-      background:var(--black);
-      color:var(--text-main);
-      display:flex; align-items:center; justify-content:center;
-      min-height:100vh; overflow:hidden;
-    }
-    ::-webkit-scrollbar { width:4px; }
-    ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
-
-    /* ── BACKGROUND ── */
-    .bg-layer {
-      position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse 60% 70% at 80% 20%, rgba(122,21,21,.3) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 50% at 10% 90%, rgba(201,168,76,.06) 0%, transparent 55%),
-        linear-gradient(155deg, #0a0706 0%, #1a0c09 50%, #0a0706 100%);
-    }
-    .bg-grid {
-      position:fixed; inset:0; pointer-events:none; z-index:0;
-      background-image:
-        linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
-      background-size:80px 80px;
-    }
-
-    /* ── CORNER DECO ── */
-    .corner { position:fixed; width:80px; height:80px; border-color:rgba(201,168,76,.28); border-style:solid; z-index:1; }
-    .corner.tl { top:32px; left:32px; border-width:1px 0 0 1px; }
-    .corner.tr { top:32px; right:32px; border-width:1px 1px 0 0; }
-    .corner.bl { bottom:32px; left:32px; border-width:0 0 1px 1px; }
-    .corner.br { bottom:32px; right:32px; border-width:0 1px 1px 0; }
-
-    /* ── LOGIN CARD ── */
-    .login-wrap {
-      position:relative; z-index:2;
-      width:100%; max-width:440px;
-      padding:0 24px;
-      animation:fadeUp .8s cubic-bezier(.22,1,.36,1) both;
-    }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
-
-    .login-card {
-      background:var(--black-3);
-      border:1px solid rgba(201,168,76,.2);
-      padding:52px 48px;
-      position:relative;
-    }
-    .login-card::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-
-    /* ── LOGO ── */
-    .login-logo {
-      text-align:center; margin-bottom:10px;
-    }
-    .login-logo span {
-      font-family:'Playfair Display',serif;
-      font-size:2.2rem; font-weight:700;
-      color:var(--gold); letter-spacing:.1em;
-    }
-    .login-logo sup { font-size:.5rem; color:var(--gold-light); font-style:italic; }
-    .login-subtitle {
-      text-align:center; margin-bottom:40px;
-    }
-    .login-subtitle p {
-      font-size:.7rem; letter-spacing:.22em; text-transform:uppercase;
-      color:var(--text-muted); font-weight:500;
-    }
-
-    /* ── ORNAMENT ── */
-    .ornament {
-      display:flex; align-items:center; gap:12px; margin-bottom:36px;
-    }
-    .ornament::before, .ornament::after {
-      content:''; flex:1; height:1px;
-    }
-    .ornament::before { background:linear-gradient(90deg,transparent,rgba(201,168,76,.4)); }
-    .ornament::after  { background:linear-gradient(90deg,rgba(201,168,76,.4),transparent); }
-    .ornament span { font-size:.65rem; letter-spacing:.2em; color:var(--text-muted); white-space:nowrap; text-transform:uppercase; }
-
-    /* ── FORM ── */
-    .form-group { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
-    .form-group label {
-      font-size:.68rem; font-weight:500; letter-spacing:.15em;
-      text-transform:uppercase; color:var(--text-muted);
-    }
-    .input-wrap { position:relative; }
-    .input-wrap .input-icon {
-      position:absolute; left:14px; top:50%; transform:translateY(-50%);
-      font-size:.95rem; color:var(--text-muted); pointer-events:none;
-    }
-    .form-group input {
-      width:100%;
-      background:var(--black-4); border:1px solid rgba(201,168,76,.16);
-      padding:13px 16px 13px 42px;
-      font-family:'Jost',sans-serif; font-size:.88rem;
-      color:var(--cream); outline:none; transition:border-color .25s, box-shadow .25s;
-    }
-    .form-group input::placeholder { color:rgba(245,237,224,.18); }
-    .form-group input:focus {
-      border-color:var(--gold);
-      box-shadow:0 0 0 3px rgba(201,168,76,.08);
-    }
-
-    /* ── REMEMBER / FORGOT ── */
-    .form-meta {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:28px;
-    }
-    .checkbox-wrap {
-      display:flex; align-items:center; gap:8px; cursor:pointer;
-    }
-    .checkbox-wrap input[type="checkbox"] {
-      width:15px; height:15px; accent-color:var(--gold); cursor:pointer;
-    }
-    .checkbox-wrap span { font-size:.78rem; color:var(--text-muted); }
-    .forgot-link {
-      font-size:.75rem; color:var(--text-muted); text-decoration:none;
-      letter-spacing:.06em; transition:color .25s;
-    }
-    .forgot-link:hover { color:var(--gold-light); }
-
-    /* ── SUBMIT ── */
-    .btn-login {
-      width:100%;
-      background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
-      background-size:200% 100%; color:var(--black); border:none; padding:15px;
-      font-family:'Jost',sans-serif; font-size:.8rem; font-weight:500;
-      letter-spacing:.18em; text-transform:uppercase; cursor:pointer;
-      box-shadow:0 6px 26px rgba(201,168,76,.2);
-      transition:background-position .5s, box-shadow .3s, transform .2s;
-    }
-    .btn-login:hover {
-      background-position:100% 0;
-      box-shadow:0 12px 36px rgba(201,168,76,.35);
-      transform:translateY(-2px);
-    }
-
-    /* ── FOOTER NOTE ── */
-    .login-note {
-      text-align:center; margin-top:28px;
-      font-size:.72rem; color:var(--text-muted); letter-spacing:.06em;
-    }
-    .login-note span { color:rgba(201,168,76,.5); }
-
-    /* ── SIDE DECO ── */
-    .side-deco {
-      position:fixed; right:48px; top:50%; transform:translateY(-50%);
-      display:flex; flex-direction:column; align-items:center; gap:6px;
-      z-index:1;
-    }
-    .side-deco::before { content:''; width:1px; height:80px; background:linear-gradient(180deg,transparent,var(--gold)); }
-    .side-deco::after  { content:''; width:1px; height:80px; background:linear-gradient(180deg,var(--gold),transparent); }
-    .side-deco span { font-size:.65rem; letter-spacing:.22em; color:rgba(201,168,76,.4); writing-mode:vertical-rl; text-transform:uppercase; padding:8px 0; }
-
-/* ================== DASHBOARD STYLE ================== */
-:root {
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vermeil — Quản Lý Thực Đơn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
       --black:      #0a0706;
       --black-2:    #120e0c;
       --black-3:    #1c1512;
@@ -191,16 +24,7 @@
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { 
-      font-family:'Jost',sans-serif; 
-      background:var(--black-2); 
-      color:var(--text-main); 
-      display:flex; 
-      min-height:100vh; 
-      align-items: stretch; 
-      justify-content: flex-start; 
-      overflow: auto; 
-    }
+    body { font-family:'Jost',sans-serif; background:var(--black-2); color:var(--text-main); display:flex; min-height:100vh; }
     ::-webkit-scrollbar { width:4px; }
     ::-webkit-scrollbar-track { background:var(--black); }
     ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
@@ -259,10 +83,7 @@
       padding:20px 28px;
       border-top:1px solid rgba(201,168,76,.1);
     }
-    .admin-profile-link { text-decoration: none; display: block; margin-bottom: 16px; border-radius: 8px; transition: all 0.2s ease; }
-    .admin-profile-link:hover { background: rgba(201,168,76,.12); }
-    .admin-info { display:flex; align-items:center; gap:12px; padding: 8px; cursor: pointer; }
-    .admin-info:last-child { margin-bottom: 0; }
+    .admin-info { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
     .admin-avatar {
       width:36px; height:36px; border-radius:50%;
       background:linear-gradient(135deg,var(--red-deep),var(--black-5));
@@ -566,44 +387,441 @@
     /* hidden by default */
     .modal-overlay { display:none; }
     .modal-overlay.show { display:flex; }
+  </style>
+</head>
+<body>
 
-    /* ================== IDENTITY OVERRIDES ================== */
-    .manage-nav-list { list-style: none; padding: 0; }
-    .manage-nav-item { margin-bottom: 4px; }
-    .manage-nav-link {
-        display: block; padding: 10px 16px; font-size: .82rem; font-weight: 500;
-        letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
-        color: var(--text-muted); border-radius: 4px; transition: all .2s ease;
-    }
-    .manage-nav-link:hover { color: var(--gold-light); background: rgba(201,168,76,.1); }
-    .manage-nav-link.active { color: var(--gold); background: rgba(201,168,76,.15); }
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="#">VERMEIL<sup>®</sup></a>
+    <p>Admin Dashboard</p>
+  </div>
 
-    .identity-form-group { margin-bottom: 20px; }
-    .identity-form-group label {
-        display: block; font-size: .68rem; font-weight: 500; letter-spacing: .15em;
-        text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
-    }
-    .identity-input {
-        width: 100%; max-width: 480px; 
-        background: var(--black-4); border: 1px solid rgba(201,168,76,.16);
-        padding: 12px 16px; font-family: 'Jost', sans-serif; font-size: .88rem;
-        color: var(--cream); outline: none; transition: all 0.25s;
-    }
-    .identity-input:focus {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(201,168,76,.1);
-    }
-    .identity-input:disabled { background: var(--black-2); color: var(--text-muted); opacity: 0.6; cursor: not-allowed; }
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Tổng Quan</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📅</span> Đặt Bàn
+      <span class="nav-badge">12</span>
+    </a>
 
-    .btn-identity-save {
-        background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
-        background-size: 200% 100%; color: var(--black); border: none; padding: 12px 32px;
-        font-family: 'Jost', sans-serif; font-size: .78rem; font-weight: 500;
-        letter-spacing: .18em; text-transform: uppercase; cursor: pointer;
-        transition: background-position .5s, transform .2s, box-shadow .3s;
-        box-shadow: 0 6px 20px rgba(201,168,76,.18);
-    }
-    .btn-identity-save:hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,.3); }
+    <div class="nav-section-label">Thực Đơn</div>
+    <a href="#" class="nav-item active">
+      <span class="nav-icon">🍽️</span> Quản Lý Món Ăn
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🗂️</span> Danh Mục
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🏷️</span> Giá & Khuyến Mãi
+    </a>
 
-    .validation-summary-errors { color: var(--red-mid); font-size: .82rem; margin-bottom: 20px; }
-    .field-validation-error { color: var(--red-mid); font-size: .72rem; margin-top: 4px; display: block; }
+    <div class="nav-section-label">Vận Hành</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🪑</span> Sơ Đồ Bàn
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📦</span> Đơn Hàng
+      <span class="nav-badge">5</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">📈</span> Doanh Thu
+    </a>
+
+    <div class="nav-section-label">Hệ Thống</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">👥</span> Nhân Viên
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">⚙️</span> Cài Đặt
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-info">
+      <div class="admin-avatar">👑</div>
+      <div class="admin-detail">
+        <strong>Nguyễn Minh Tú</strong>
+        <span>Super Admin</span>
+      </div>
+    </div>
+    <button class="btn-logout">⬡ Đăng Xuất</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Quản Lý Thực Đơn</h1>
+      <p>Vermeil Fine Dining · Cập nhật lần cuối: hôm nay, 14:32</p>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Tìm kiếm món ăn..."/>
+      </div>
+      <div class="topbar-icon">
+        🔔
+        <span class="notif-dot"></span>
+      </div>
+      <div class="topbar-icon">👤</div>
+    </div>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">🍽️</div>
+          <span class="stat-trend">↑ 3 mới</span>
+        </div>
+        <div class="stat-card-num">42</div>
+        <div class="stat-card-label">Tổng Món Ăn</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">✅</div>
+          <span class="stat-trend">↑ 2%</span>
+        </div>
+        <div class="stat-card-num">38</div>
+        <div class="stat-card-label">Đang Hiển Thị</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">🗂️</div>
+          <span class="stat-trend">—</span>
+        </div>
+        <div class="stat-card-num">5</div>
+        <div class="stat-card-label">Danh Mục</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon">⭐</div>
+          <span class="stat-trend down">↓ 1</span>
+        </div>
+        <div class="stat-card-num">4</div>
+        <div class="stat-card-label">Ẩn / Hết Món</div>
+      </div>
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="section-header">
+      <div class="section-header-left">
+        <h2>Danh Sách Món Ăn</h2>
+        <p>Quản lý toàn bộ thực đơn nhà hàng</p>
+      </div>
+      <div class="section-header-right">
+        <button class="btn-filter" onclick="document.getElementById('modalAdd').classList.add('show')">
+          ⚙ Lọc
+        </button>
+        <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('show')">
+          ＋ Thêm Món Mới
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab active">Tất Cả (42)</button>
+      <button class="tab">Khai Vị (8)</button>
+      <button class="tab">Món Chính (18)</button>
+      <button class="tab">Tráng Miệng (10)</button>
+      <button class="tab">Đồ Uống (6)</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên Món</th>
+            <th>Danh Mục</th>
+            <th>Giá</th>
+            <th>Trạng Thái</th>
+            <th>Cập Nhật</th>
+            <th>Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">01</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🥩</div>
+                <div>
+                  <div class="td-dish-name">Bò Wagyu A5 Áp Chảo</div>
+                  <div class="td-dish-cat">Món Chính · Signature</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">480.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">12/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">02</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🐟</div>
+                <div>
+                  <div class="td-dish-name">Cá Hồi Sốt Chanh Bơ</div>
+                  <div class="td-dish-cat">Món Chính · Mới</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">295.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">15/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">03</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🍝</div>
+                <div>
+                  <div class="td-dish-name">Pasta Nấm Truffle Đen</div>
+                  <div class="td-dish-cat">Món Chính · Chef's Pick</div>
+                </div>
+              </div>
+            </td>
+            <td>Món Chính</td>
+            <td><span class="price-cell">225.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">10/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">04</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🥗</div>
+                <div>
+                  <div class="td-dish-name">Salad Rau Mầm Hữu Cơ</div>
+                  <div class="td-dish-cat">Khai Vị · Healthy</div>
+                </div>
+              </div>
+            </td>
+            <td>Khai Vị</td>
+            <td><span class="price-cell">85.000₫</span></td>
+            <td><span class="status-badge hidden">Đã ẩn</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">08/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:.78rem">05</td>
+            <td>
+              <div class="td-dish">
+                <div class="td-icon">🍮</div>
+                <div>
+                  <div class="td-dish-name">Panna Cotta Vanilla Bourbon</div>
+                  <div class="td-dish-cat">Tráng Miệng · Mới</div>
+                </div>
+              </div>
+            </td>
+            <td>Tráng Miệng</td>
+            <td><span class="price-cell">95.000₫</span></td>
+            <td><span class="status-badge active">Hiển thị</span></td>
+            <td style="font-size:.76rem;color:var(--text-muted)">18/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn-view">👁</button>
+                <button class="btn-edit" onclick="document.getElementById('modalEdit').classList.add('show')">✏ Sửa</button>
+                <button class="btn-delete" onclick="document.getElementById('modalDelete').classList.add('show')">✕ Xoá</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- PAGINATION -->
+      <div class="pagination">
+        <p>Hiển thị 1–5 / 42 món</p>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">…</button>
+          <button class="page-btn">9</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</main>
+
+<!-- ══ MODAL: THÊM MÓN ══ -->
+<div class="modal-overlay" id="modalAdd">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modalAdd').classList.remove('show')">✕</button>
+    <h3>Thêm Món Mới</h3>
+    <p>Điền đầy đủ thông tin · Lưu để cập nhật thực đơn</p>
+
+    <div class="form-group-m">
+      <label>Tên Món</label>
+      <input type="text" placeholder="Nhập tên món ăn..."/>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Danh Mục</label>
+        <select>
+          <option>— Chọn danh mục —</option>
+          <option>Khai Vị</option>
+          <option>Món Chính</option>
+          <option>Tráng Miệng</option>
+          <option>Đồ Uống</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Giá (₫)</label>
+        <input type="text" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group-m">
+      <label>Mô Tả</label>
+      <textarea placeholder="Mô tả nguyên liệu và cách chế biến..."></textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Badge / Nhãn</label>
+        <select>
+          <option>— Không có —</option>
+          <option>Mới</option>
+          <option>Signature</option>
+          <option>Phổ Biến</option>
+          <option>Chef's Pick</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Trạng Thái</label>
+        <select>
+          <option>Hiển thị</option>
+          <option>Ẩn</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalAdd').classList.remove('show')">Huỷ</button>
+      <button class="btn-modal-save">＋ Lưu Món Mới</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SỬA MÓN ══ -->
+<div class="modal-overlay" id="modalEdit">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modalEdit').classList.remove('show')">✕</button>
+    <h3>Chỉnh Sửa Món Ăn</h3>
+    <p>Cập nhật thông tin · Lưu để áp dụng thay đổi</p>
+
+    <div class="form-group-m">
+      <label>Tên Món</label>
+      <input type="text" value="Bò Wagyu A5 Áp Chảo"/>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Danh Mục</label>
+        <select>
+          <option>Khai Vị</option>
+          <option selected>Món Chính</option>
+          <option>Tráng Miệng</option>
+          <option>Đồ Uống</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Giá (₫)</label>
+        <input type="text" value="480000"/>
+      </div>
+    </div>
+    <div class="form-group-m">
+      <label>Mô Tả</label>
+      <textarea>Thăn bò Wagyu A5 nhập khẩu Nhật Bản nướng medium-rare, kèm nấm truffle đen và rau củ nướng thảo mộc.</textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group-m">
+        <label>Badge / Nhãn</label>
+        <select>
+          <option selected>Signature</option>
+          <option>Mới</option>
+          <option>Phổ Biến</option>
+          <option>Chef's Pick</option>
+        </select>
+      </div>
+      <div class="form-group-m">
+        <label>Trạng Thái</label>
+        <select>
+          <option selected>Hiển thị</option>
+          <option>Ẩn</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalEdit').classList.remove('show')">Huỷ</button>
+      <button class="btn-modal-save">✓ Lưu Thay Đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: XOÁ ══ -->
+<div class="modal-overlay" id="modalDelete">
+  <div class="modal modal-delete">
+    <button class="modal-close" onclick="document.getElementById('modalDelete').classList.remove('show')">✕</button>
+    <div class="del-icon">🗑️</div>
+    <h3>Xác Nhận Xoá Món</h3>
+    <p>Bạn có chắc muốn xoá <strong style="color:var(--gold)">"Bò Wagyu A5 Áp Chảo"</strong> khỏi thực đơn? Hành động này không thể hoàn tác.</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="document.getElementById('modalDelete').classList.remove('show')">Huỷ Bỏ</button>
+      <button class="btn-confirm-del">✕ Xác Nhận Xoá</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Close modal when clicking overlay background
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>

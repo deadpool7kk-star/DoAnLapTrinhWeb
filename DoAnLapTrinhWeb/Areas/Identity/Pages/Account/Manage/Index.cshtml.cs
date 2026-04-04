@@ -52,12 +52,11 @@ namespace DoAnLapTrinhWeb.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Display(Name = "Họ và tên")]
+            public string FullName { get; set; }
+
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Số điện thoại")]
             public string PhoneNumber { get; set; }
         }
 
@@ -70,6 +69,7 @@ namespace DoAnLapTrinhWeb.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                FullName = user.FullName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -100,6 +100,17 @@ namespace DoAnLapTrinhWeb.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to update full name.";
+                    return RedirectToPage();
+                }
+            }
+
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
@@ -112,7 +123,7 @@ namespace DoAnLapTrinhWeb.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Hồ sơ của bạn đã được cập nhật thành công.";
             return RedirectToPage();
         }
     }

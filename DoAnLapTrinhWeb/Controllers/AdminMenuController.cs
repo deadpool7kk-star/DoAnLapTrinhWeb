@@ -18,8 +18,14 @@ namespace DoAnLapTrinhWeb.Controllers
         // GET: /AdminMenu
         public async Task<IActionResult> Index()
         {
-            var dishes = await _context.Dishes.Include(d => d.Category).ToListAsync();
-            var categories = await _context.Categories.ToListAsync();
+            var dishes = await _context.Dishes
+                .Include(d => d.Category)
+                .Where(d => d.Category.Name != "Trạng Miệng")
+                .ToListAsync();
+
+            var categories = await _context.Categories
+                .Where(c => c.Name != "Trạng Miệng")
+                .ToListAsync();
             
             ViewBag.Categories = categories;
             

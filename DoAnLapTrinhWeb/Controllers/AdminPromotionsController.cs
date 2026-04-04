@@ -18,7 +18,11 @@ namespace DoAnLapTrinhWeb.Controllers
         // GET: /AdminPromotions
         public async Task<IActionResult> Index()
         {
-            var dishes = await _context.Dishes.Include(d => d.Category).ToListAsync();
+            var dishes = await _context.Dishes
+                .Include(d => d.Category)
+                .Where(d => d.Category != null && d.Category.Name != "Trạng Miệng")
+                .ToListAsync();
+            
             return View(dishes);
         }
 
