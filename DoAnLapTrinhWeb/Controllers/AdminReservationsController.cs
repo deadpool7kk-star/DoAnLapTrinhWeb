@@ -61,13 +61,27 @@ namespace DoAnLapTrinhWeb.Controllers
                 }
 
                 reservation.TableId = tableId;
-                reservation.Status = "Seated";
-                table.Status = "Occupied";
+                reservation.Status = "Confirmed";
+                table.Status = "Reserved";
                 
                 await _context.SaveChangesAsync();
                 return Json(new { success = true });
             }
             return Json(new { success = false, message = "Không tìm thấy thông tin yêu cầu hoặc bàn." });
+        }
+
+        // POST: /AdminReservations/GuestArrived/5
+        [HttpPost]
+        public async Task<IActionResult> GuestArrived(int id)
+        {
+            var reservation = await _context.Reservations.Include(r => r.Table).FirstOrDefaultAsync(r => r.Id == id);
+            if (reservation != null && reservation.Status == "Confirmed" && reservation.Table != null)
+            {
+                reservation.Status = "Seated";
+                reservation.Table.Status = "Occupied";
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: /AdminReservations/Cancel/5

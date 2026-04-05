@@ -363,16 +363,16 @@
                             <div class="action-group">
                                 @if (item.Status == "Pending")
                                 {
-                                    <form asp-action="Confirm" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                        <button type="submit" class="btn-action btn-action-success">✓ Duyệt</button>
-                                    </form>
+                                    <button onclick="assignTable(@item.Id)" class="btn-action btn-action-success">✓ Duyệt & Xếp Bàn</button>
                                     <form asp-action="Cancel" asp-route-id="@item.Id" method="post" style="display:inline;">
                                         <button type="submit" class="btn-action btn-action-danger">✕ Hủy</button>
                                     </form>
                                 }
                                 else if (item.Status == "Confirmed")
                                 {
-                                    <button onclick="assignTable(@item.Id)" class="btn-action btn-action-primary">🍽️ Xếp Bàn</button>
+                                    <form asp-action="GuestArrived" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-action btn-action-primary">👋 Khách Đã Đến</button>
+                                    </form>
                                 }
                                 else if (item.Status == "Seated")
                                 {
