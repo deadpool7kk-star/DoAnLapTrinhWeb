@@ -25,7 +25,7 @@
     ::-webkit-scrollbar { width:4px; }
     ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:4px; }
 
-    /* â”€â”€ BACKGROUND â”€â”€ */
+    /*  BACKGROUND  */
     .bg-layer {
       position:fixed; inset:0; pointer-events:none; z-index:0;
       background:
@@ -41,14 +41,14 @@
       background-size:80px 80px;
     }
 
-    /* â”€â”€ CORNER DECO â”€â”€ */
+    /*  CORNER DECO  */
     .corner { position:fixed; width:80px; height:80px; border-color:rgba(201,168,76,.28); border-style:solid; z-index:1; }
     .corner.tl { top:32px; left:32px; border-width:1px 0 0 1px; }
     .corner.tr { top:32px; right:32px; border-width:1px 1px 0 0; }
     .corner.bl { bottom:32px; left:32px; border-width:0 0 1px 1px; }
     .corner.br { bottom:32px; right:32px; border-width:0 1px 1px 0; }
 
-    /* â”€â”€ LOGIN CARD â”€â”€ */
+    /*  LOGIN CARD  */
     .login-wrap {
       position:relative; z-index:2;
       width:100%; max-width:440px;
@@ -68,7 +68,7 @@
       background:linear-gradient(90deg, transparent, var(--gold), transparent);
     }
 
-    /* â”€â”€ LOGO â”€â”€ */
+    /*  LOGO  */
     .login-logo {
       text-align:center; margin-bottom:10px;
     }
@@ -86,7 +86,7 @@
       color:var(--text-muted); font-weight:500;
     }
 
-    /* â”€â”€ ORNAMENT â”€â”€ */
+    /*  ORNAMENT  */
     .ornament {
       display:flex; align-items:center; gap:12px; margin-bottom:36px;
     }
@@ -97,7 +97,7 @@
     .ornament::after  { background:linear-gradient(90deg,rgba(201,168,76,.4),transparent); }
     .ornament span { font-size:.65rem; letter-spacing:.2em; color:var(--text-muted); white-space:nowrap; text-transform:uppercase; }
 
-    /* â”€â”€ FORM â”€â”€ */
+    /*  FORM  */
     .form-group { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
     .form-group label {
       font-size:.68rem; font-weight:500; letter-spacing:.15em;
@@ -121,7 +121,7 @@
       box-shadow:0 0 0 3px rgba(201,168,76,.08);
     }
 
-    /* â”€â”€ REMEMBER / FORGOT â”€â”€ */
+    /*  REMEMBER / FORGOT  */
     .form-meta {
       display:flex; justify-content:space-between; align-items:center;
       margin-bottom:28px;
@@ -139,7 +139,7 @@
     }
     .forgot-link:hover { color:var(--gold-light); }
 
-    /* â”€â”€ SUBMIT â”€â”€ */
+    /*  SUBMIT  */
     .btn-login {
       width:100%;
       background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
@@ -155,14 +155,14 @@
       transform:translateY(-2px);
     }
 
-    /* â”€â”€ FOOTER NOTE â”€â”€ */
+    /*  FOOTER NOTE  */
     .login-note {
       text-align:center; margin-top:28px;
       font-size:.72rem; color:var(--text-muted); letter-spacing:.06em;
     }
     .login-note span { color:rgba(201,168,76,.5); }
 
-    /* â”€â”€ SIDE DECO â”€â”€ */
+    /*  SIDE DECO  */
     .side-deco {
       position:fixed; right:48px; top:50%; transform:translateY(-50%);
       display:flex; flex-direction:column; align-items:center; gap:6px;

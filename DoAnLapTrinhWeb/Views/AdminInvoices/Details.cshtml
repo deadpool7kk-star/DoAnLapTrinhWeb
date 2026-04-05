@@ -160,10 +160,6 @@
 </style>
 
 @section Scripts {
-    <div id="antiforgery-token-container" style="display:none;">
-        @Html.AntiForgeryToken()
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmPayment(id) {
@@ -180,22 +176,15 @@
                 cancelButtonText: 'Đóng'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/AdminInvoices/MarkAsPaid/' + id,
-                        type: 'POST',
-                        headers: {
-                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Thành công',
-                                    background: '#1c1512',
-                                    color: '#f5ede0',
-                                    confirmButtonColor: '#c9a84c'
-                                }).then(() => location.reload());
-                            }
+                    $.post('/AdminInvoices/MarkAsPaid/' + id, function(data) {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                background: '#1c1512',
+                                color: '#f5ede0',
+                                confirmButtonColor: '#c9a84c'
+                            }).then(() => location.reload());
                         }
                     });
                 }

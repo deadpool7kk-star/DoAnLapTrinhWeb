@@ -66,7 +66,6 @@ namespace DoAnLapTrinhWeb.Controllers
 
         // POST: AdminInvoices/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] InvoiceCreateViewModel model)
         {
             if (ModelState.IsValid)
